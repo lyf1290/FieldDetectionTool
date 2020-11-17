@@ -10,3 +10,4 @@ public class Main {
         InfoCollector.show();
     }
 }
+//-javaagent:/Users/liangyufei/Desktop/FieldDetectionTool/tool/toolTest/tool.jar=/Users/liangyufei/Desktop/FieldDetectionTool/tool/toolTest/src/resources/UserConfig.txt
