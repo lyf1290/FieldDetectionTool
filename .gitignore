@@ -53,7 +53,7 @@ cmake-build-*/
 
 # IntelliJ
 out/
-.idea/
+.idea/*
 *.iml
 target
 
