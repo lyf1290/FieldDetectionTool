@@ -1,6 +1,7 @@
 import adapters.FieldDetectionAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import system.SystemConfig;
 import tools.ByteCodeTool;
 import tools.InfoCollector;
@@ -16,35 +17,19 @@ public class Main {
     private final static int ASM_VERSION = ASM8;
 
     public static void main(String args[]){
-        Test test = new Test();
-        test.getTest();
-        test.getTest();
-        new TestFather();
-        InfoCollector.show();
-//        byte[] sourceByteCodes = ByteCodeTool.input("target/classes/Test.class");
-//
-//        if(sourceByteCodes != null){
-//            ClassReader cr = new ClassReader(sourceByteCodes);
-//            ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
-//
-//            //选择一个adpter去适配cr
-//            FieldDetectionAdapter fda = new FieldDetectionAdapter(ASM8,cw);
-//            cr.accept(fda,0);
-//
-//            ByteCodeTool.output(cw.toByteArray(),"output/Test.class");
-//        }
-//        sourceByteCodes = ByteCodeTool.input("target/classes/TestFather.class");
-//
-//        if(sourceByteCodes != null){
-//            ClassReader cr = new ClassReader(sourceByteCodes);
-//            ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
-//
-//            //选择一个adpter去适配cr
-//            FieldDetectionAdapter fda = new FieldDetectionAdapter(ASM8,cw);
-//            cr.accept(fda,0);
-//
-//            ByteCodeTool.output(cw.toByteArray(),"output/TestFather.class");
-//        }
+        UserConfig.getInstance().setUserConfigFilePath("/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt");
+
+        byte[] classfileBuffer = ByteCodeTool.input("/Users/liangyufei/Downloads/IndicesService.class");
+        ClassReader cr = new ClassReader(classfileBuffer);
+        ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
+
+        //选择一个adpter去适配cr
+        FieldDetectionAdapter fda = new FieldDetectionAdapter(Opcodes.ASM8,cw);
+        cr.accept(fda,0);
+
+        ByteCodeTool.output(cw.toByteArray(),"/Users/liangyufei/Desktop/FieldDetectionTool/tool/out/IndicesService.class");
+
+
 
     }
 }

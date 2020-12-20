@@ -14,6 +14,7 @@ public class FieldDetectionConstructAdviceAdapter extends ConstructAdviceAdapter
 
     @Override
     protected void onMethodEnter() {
+
         if(this.mv != null){
 //            List<String> fieldNameList = SystemConfig.getInstance().getFieldNameList(this.getOwner());
 //            if(fieldNameList != null){
@@ -53,6 +54,7 @@ public class FieldDetectionConstructAdviceAdapter extends ConstructAdviceAdapter
                 this.mv.visitIntInsn(BIPUSH, fieldNum);
                 this.mv.visitIntInsn(NEWARRAY, T_INT);
                 this.mv.visitFieldInsn(PUTFIELD, this.getOwner(), "getDirtyTag", "[I");
+
             }
         }
 

@@ -8,7 +8,7 @@ public class Test extends TestFather{
     int test1 = 1;
     int test2 = 2;
 
-    public Test() {
+    public Test(int k) {
     }
 
     public int getTest(){
@@ -16,7 +16,7 @@ public class Test extends TestFather{
     }
 
     public static void main(String args[]){
-        Test test = new Test();
+        Test test = new Test(1);
         test.getTest();
         test.getTest();
         InfoCollector.show();

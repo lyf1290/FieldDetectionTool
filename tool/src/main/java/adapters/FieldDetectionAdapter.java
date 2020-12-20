@@ -19,6 +19,10 @@ public class FieldDetectionAdapter extends NextAdapter  {
     protected ConstructAdviceAdapter constructAdviceAdapter = new FieldDetectionConstructAdviceAdapter(ASM8,new MethodVisitorAdapter(ASM8),0,"<init>","()V");
     //往方法的特定指令位置插入指令的Adatper
     protected MethodVisitorAdapter allMethodVisitorAdapter = new FieldDetectionMethodVisitorAdapter(ASM8);
+    //往构造函数的指定指令位置插入指令的Adapter
+    protected MethodVisitorAdapter constructMethodVisitorAdapter = new FieldDetectionConstructMethodVisitorAdapter(ASM8);
+
+
 
     /** 必须写
      * 覆盖NextAdapter中的获取constructAdviceAdapter的方法，让NextAdpter中能够使用属于当前Adapter的ConstructAdviceAdapter
@@ -46,6 +50,16 @@ public class FieldDetectionAdapter extends NextAdapter  {
     @Override
     protected void setAllMethodVisitorAdapter(MethodVisitor mv){
         this.allMethodVisitorAdapter.setMv(mv);
+    }
+
+    @Override
+    protected MethodVisitorAdapter getConstructMethodVisitorAdapter(){
+        return this.constructMethodVisitorAdapter;
+    }
+    @Override
+    protected void setConstructMethodVisitorAdapter(MethodVisitor mv){
+        this.constructMethodVisitorAdapter.setMv(mv);
+        this.constructMethodVisitorAdapter.setOwner(this.owner);
     }
 
     /**

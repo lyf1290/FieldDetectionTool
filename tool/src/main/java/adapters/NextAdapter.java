@@ -37,7 +37,8 @@ public abstract class NextAdapter extends ClassVisitor {
     protected ConstructAdviceAdapter constructAdviceAdapter = null;
     //用于更改所有Method的Insn的MethodVisitAdapter
     protected MethodVisitorAdapter allMethodVisitorAdapter = null;
-
+    //用于更改构造函数的MethodVisitorAdapter
+    protected MethodVisitorAdapter constructMethodVisitorAdapter = null;
 
 
     protected ConstructAdviceAdapter getConstructAdviceAdapter(){
@@ -57,7 +58,14 @@ public abstract class NextAdapter extends ClassVisitor {
     protected void setAllMethodVisitorAdapter(MethodVisitor mv){
         this.allMethodVisitorAdapter.setMv(mv);
     }
+    protected MethodVisitorAdapter getConstructMethodVisitorAdapter(){
+        return this.constructMethodVisitorAdapter;
+    }
 
+    protected void setConstructMethodVisitorAdapter(MethodVisitor mv){
+        this.constructMethodVisitorAdapter.setMv(mv);
+        this.constructMethodVisitorAdapter.setOwner(this.owner);
+    }
     /**
      * 构造函数
      * @param api  使用的ASM的版本号
@@ -91,10 +99,14 @@ public abstract class NextAdapter extends ClassVisitor {
         MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
         if(mv != null && interestring){
             if(name.equals("<init>")){
-                if(this.getConstructAdviceAdapter() != null){
-                    this.setConstructAdviceAdapter(access,descriptor,mv);
-                    mv = this.getConstructAdviceAdapter();
+                if(this.getConstructMethodVisitorAdapter() != null){
+                    this.setConstructMethodVisitorAdapter(mv);
+                    mv = this.getConstructMethodVisitorAdapter();
                 }
+//                if(this.getConstructAdviceAdapter() != null){
+//                    this.setConstructAdviceAdapter(access,descriptor,mv);
+//                    mv = this.getConstructAdviceAdapter();
+//                }
             }
             if(this.getAllMethodVisitorAdapter() != null){
                 this.setAllMethodVisitorAdapter(mv);
