@@ -12,7 +12,6 @@ import static java.util.stream.Collectors.toList;
 public class UserConfig {
 
     //用户关注的类在JVM中的internal name  例如com/Student
-    //private List<String> interestringClassNameList;
     private List<String> interestringClassFilesPathList = new ArrayList<>();
     private String userConfigFilePath = "";
     private final static UserConfig USER_CONFIG = new UserConfig();

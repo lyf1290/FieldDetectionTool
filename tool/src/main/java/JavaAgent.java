@@ -3,6 +3,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import system.SystemConfig;
+import tools.InfoCollector;
 import user.UserConfig;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -15,6 +16,13 @@ public class JavaAgent {
         UserConfig.getInstance().setUserConfigFilePath(agentArgs);
         System.out.println("agentArgs : " + agentArgs);
         inst.addTransformer(new DefineTransformer(), true);
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                InfoCollector.show();
+            }
+        }));
     }
     static class DefineTransformer implements ClassFileTransformer {
 

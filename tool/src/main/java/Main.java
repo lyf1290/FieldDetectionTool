@@ -17,18 +17,9 @@ public class Main {
     private final static int ASM_VERSION = ASM8;
 
     public static void main(String args[]){
-        UserConfig.getInstance().setUserConfigFilePath("/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt");
-
-        byte[] classfileBuffer = ByteCodeTool.input("/Users/liangyufei/Downloads/IndicesService.class");
-        ClassReader cr = new ClassReader(classfileBuffer);
-        ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
-
-        //选择一个adpter去适配cr
-        FieldDetectionAdapter fda = new FieldDetectionAdapter(Opcodes.ASM8,cw);
-        cr.accept(fda,0);
-
-        ByteCodeTool.output(cw.toByteArray(),"/Users/liangyufei/Desktop/FieldDetectionTool/tool/out/IndicesService.class");
-
+        Test test = new Test(1);
+        test.getTest();
+        test.getTest();
 
 
     }

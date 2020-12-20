@@ -137,6 +137,5 @@ class Student  extends People {
 ## Build
 
 1. 将`tool project`编译成一个`tool.jar`包。（本质是一个JavaAgent，需要带上Maven生成的包）
-2. 将`tool.jar`作为`lib`加入到需要检测的项目中。
-3. 编写一个名称为`UserConfig.txt`的文本文件，文件的每行是**关注类.class**的**路径**。
-4. 将 `-javaagent:JarPath=UserConfigPath` 加入到VM options中。其`JarPath`是`tool.jar`的绝对路径，`UserConfigPath`是`UserConfig.txt`的绝对路径。
+2. 编写一个名称为`UserConfig.txt`的文本文件，文件的每行是**关注类.class**的**路径**。
+3. 使用 `java -javaagent:JarPath=UserConfigPath -Xbootclasspath/a:JarPath Java项目`来执行，其中`JarPath`是`tool.jar`的绝对路径，`UserConfigPath`是`UserConfig.txt`的绝对路径。
