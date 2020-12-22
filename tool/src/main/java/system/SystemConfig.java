@@ -16,6 +16,7 @@ public class SystemConfig {
     private Map<String, List<String>> fieldNameMap = new HashMap<>();
     private Map<String,String> parentClassNameMap = new HashMap<>();
     private Map<String,String> outerClassNameMap = new HashMap<>();
+    private Map<String,List<String>> overwriteFieldMap = new HashMap<>();
 
     private final static SystemConfig SYSTEM_CONFIG = new SystemConfig();
     public static SystemConfig getInstance(){
@@ -102,6 +103,16 @@ public class SystemConfig {
                 if(!fieldNameList.contains(parentFieldName)){
                     fieldNameList.add(parentFieldName);
                 }
+                else{
+                    //父子相同的field
+                    if(!this.overwriteFieldMap.containsKey(parentClassName)){
+                        List<String> overWriteFieldList = new ArrayList<>();
+                        this.overwriteFieldMap.put(parentClassName,overWriteFieldList);
+                    }
+                    List<String> overWriteFieldList = this.overwriteFieldMap.get(parentClassName);
+                    overWriteFieldList.add(parentFieldName);
+                    this.overwriteFieldMap.put(parentClassName,overWriteFieldList);
+                }
             }
         }
         extendFlagMap.put(className,true);
@@ -147,5 +158,12 @@ public class SystemConfig {
     }
     public void setConstructSiteSize(int constructSiteSize){
         this.constructSiteSize = constructSiteSize;
+    }
+    public List<String> getOverwriteFieldList(String className){
+
+        if(this.overwriteFieldMap.containsKey(className)){
+            return this.overwriteFieldMap.get(className);
+        }
+        return new ArrayList<>();
     }
 }

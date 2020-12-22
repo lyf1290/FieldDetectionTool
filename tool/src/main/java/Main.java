@@ -24,7 +24,6 @@ public class Main {
         Test.Inner inner = test.new Inner();
 
 
-
     }
 }
 

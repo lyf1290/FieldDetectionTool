@@ -36,7 +36,13 @@ public class FieldDetectionMethodVisitorAdapter extends MethodVisitorAdapter {
                 else if(opcode == Opcodes.GETFIELD){
                     this.mv.visitInsn(Opcodes.DUP);
                     this.mv.visitLdcInsn(name);
-                    this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    if(this.systemConfig.getOverwriteFieldList(owner).contains(name)){
+                        //当前访问的field的被覆盖的field
+                        this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    }
+                    else{
+                        this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    }
 
                 }
             }
@@ -49,7 +55,12 @@ public class FieldDetectionMethodVisitorAdapter extends MethodVisitorAdapter {
                         this.mv.visitInsn(Opcodes.POP);
                     }
                     this.mv.visitLdcInsn(name);
-                    this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    if(this.systemConfig.getOverwriteFieldList(owner).contains(name)){
+                        this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    }
+                    else{
+                        this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    }
                 }
             }
 

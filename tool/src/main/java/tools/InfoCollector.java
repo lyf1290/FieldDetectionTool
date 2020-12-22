@@ -18,6 +18,7 @@ public class InfoCollector {
     private static Map<String, ClassInfo> classInfoMap = new HashMap<>();
     private static Map<Long, Stack<CallSite>> callStackMap = new HashMap<>();
     private static Map<String,Lock> lockMap = new HashMap<>();
+
     static {
 
         classInfoMap.clear();
@@ -80,7 +81,7 @@ public class InfoCollector {
             System.out.println();
         });
     }
-    public static  int getInstanceId(String className){
+    public static  int getInstanceId(String className,String[] constructSite){
         if(!lockMap.containsKey(className)){
             lockMap.put(className,new ReentrantLock());
         }
@@ -88,7 +89,7 @@ public class InfoCollector {
         int instanceId = -1;
         lock.lock();
         try{
-            classInfoMap.get(className).newInstance(callStackMap.get(Thread.currentThread().getId()));
+            classInfoMap.get(className).newInstance(constructSite);
             instanceId = classInfoMap.get(className).getInstanceCount();
         }finally {
             lock.unlock();
@@ -98,19 +99,30 @@ public class InfoCollector {
         }
         return instanceId;
     }
-    public static void pushStack(String className,String methodName,String methodDesc){
+    public static String[] pushStack(String className,String methodName,String methodDesc){
         Long threadId = Thread.currentThread().getId();
+        String[] constructSite;
         if(callStackMap.containsKey(threadId)){
             //该线程已经有一个stack了
             Stack<CallSite> callStack =  callStackMap.get(threadId);
             callStack.push(new CallSite(className,methodName,methodDesc));
-
+            constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.size())];
+            for(int i = 0; i < constructSite.length; ++i){
+                constructSite[i] = callStack.elementAt(i).toString();
+            }
         }
         else{
             Stack<CallSite> callStack =  new Stack<>();
             callStack.push(new CallSite(className,methodName,methodDesc));
             callStackMap.put(threadId,callStack);
+            constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.size())];
+            for(int i = 0; i < constructSite.length; ++i){
+                constructSite[i] = callStack.elementAt(i).toString();
+            }
+
+
         }
+        return constructSite;
     }
     public static void popStack(){
         Long threadId = Thread.currentThread().getId();

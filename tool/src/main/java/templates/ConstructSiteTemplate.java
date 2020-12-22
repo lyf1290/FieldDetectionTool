@@ -22,6 +22,8 @@ public class ConstructSiteTemplate extends Template{
         fieldModels.add(fieldModel);
         fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"putDirtyTag","[B",null,null);
         fieldModels.add(fieldModel);
+        fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_constructSite$","[Ljava/lang/String;",null,null);
+        fieldModels.add(fieldModel);
         fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_instanceId$","I",null,null);
         fieldModels.add(fieldModel);
         this.newFieldModels.put(owner,fieldModels);
@@ -78,7 +80,9 @@ public class ConstructSiteTemplate extends Template{
         //初始化_instanceId$
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
         insnList.add(new LdcInsnNode(owner));
-        insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getInstanceId", "(Ljava/lang/String;)I", false));
+        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD,owner,"_constructSite$","[Ljava/lang/String;"));
+        insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getInstanceId", "(Ljava/lang/String;[Ljava/lang/String;)I", false));
         insnList.add(new FieldInsnNode(Opcodes.PUTFIELD, owner, "_instanceId$", "I"));
 
         insnList.add(notNullLabelNode);

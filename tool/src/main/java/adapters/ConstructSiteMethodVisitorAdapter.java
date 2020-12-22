@@ -34,7 +34,12 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
                 else if(opcode == Opcodes.GETFIELD){
                     this.mv.visitInsn(Opcodes.DUP);
                     this.mv.visitLdcInsn(name);
-                    this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    if(this.systemConfig.getOverwriteFieldList(owner).contains(name)) {
+                        this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    }
+                    else{
+                        this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"getField","(Ljava/lang/String;)V",false);
+                    }
 
                 }
             }
@@ -46,7 +51,12 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
                         this.mv.visitInsn(Opcodes.POP);
                     }
                     this.mv.visitLdcInsn(name);
-                    this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    if(this.systemConfig.getOverwriteFieldList(owner).contains(name)) {
+                        this.mv.visitMethodInsn(Opcodes.INVOKESPECIAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    }
+                    else{
+                        this.mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,owner,"putField","(Ljava/lang/String;)V",false);
+                    }
                 }
             }
         }
@@ -60,10 +70,12 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
         if(this.mv != null){
             //解决顺序问题
             if(!this.getMethodName().equals("<init>")){
+                this.mv.visitVarInsn(Opcodes.ALOAD, 0);
                 this.mv.visitLdcInsn(this.getOwner());
                 this.mv.visitLdcInsn(this.getMethodName());
                 this.mv.visitLdcInsn(this.getMethodDesc());
-                this.mv.visitMethodInsn(Opcodes.INVOKESTATIC,"tools/InfoCollector","pushStack","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",false);
+                this.mv.visitMethodInsn(Opcodes.INVOKESTATIC,"tools/InfoCollector","pushStack","(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)[Ljava/lang/String;",false);
+
             }
 
 //

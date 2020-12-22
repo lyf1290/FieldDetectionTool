@@ -38,9 +38,9 @@ public class ClassInfo {
     public void newInstance(){
         instanceCount++;
     }
-    public void newInstance(Stack<CallSite> callSiteStack){
+    public void newInstance(String[] constructSite){
         this.instanceCount++;
-        this.instanceInfoMap.put(instanceCount,new InstanceInfo(callSiteStack,this.fieldNameList));
+        this.instanceInfoMap.put(instanceCount,new InstanceInfo(constructSite,this.fieldNameList));
     }
     public void descInstanceCount(){
         instanceCount--;
