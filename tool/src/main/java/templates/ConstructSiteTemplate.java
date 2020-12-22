@@ -1,28 +1,18 @@
 package templates;
 
-
-import adapters.FieldDetectionAdapter;
-import com.sun.org.apache.bcel.internal.generic.ALOAD;
 import models.FieldModel;
 import models.MethodModel;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 import system.SystemConfig;
-import tools.InfoCollector;
-import user.UserConfig;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
-
-public class FieldDetectionTemplate extends Template {
-
+public class ConstructSiteTemplate extends Template{
     /**
-     * 构造FieldDetection中对Field模版
+     * 构造ConstructSite中对Field模版
      * @param owner 该field属于的className
      */
     private void buildFieldModels(String owner){
@@ -31,6 +21,8 @@ public class FieldDetectionTemplate extends Template {
         FieldModel fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"getDirtyTag","[B",null,null);
         fieldModels.add(fieldModel);
         fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"putDirtyTag","[B",null,null);
+        fieldModels.add(fieldModel);
+        fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_instanceId$","I",null,null);
         fieldModels.add(fieldModel);
         this.newFieldModels.put(owner,fieldModels);
     }
@@ -47,7 +39,7 @@ public class FieldDetectionTemplate extends Template {
      * }
      * @return 指令列表
      */
-    private InsnList buildPutGetFieldMethodInsnList(List<String> sourceFieldNameList,boolean putTag,String owner){
+    private InsnList buildPutGetFieldMethodInsnList(List<String> sourceFieldNameList, boolean putTag, String owner){
         /*
         !!!!!!!LineNumber一定要加上
         * */
@@ -59,8 +51,6 @@ public class FieldDetectionTemplate extends Template {
         InsnList insnList = new InsnList();
         List<Label> labelList = new ArrayList<>();
 
-
-        //如果putdirtytag没初始化，就先初始化，在先调用父类构造函数的时候会触发
         Label lBegin = new Label();
         labelList.add(lBegin);
         LabelNode lBeginNode = new LabelNode(lBegin);
@@ -85,12 +75,16 @@ public class FieldDetectionTemplate extends Template {
         insnList.add(new IntInsnNode(Opcodes.BIPUSH,sourceFieldNameList.size()));
         insnList.add(new IntInsnNode(Opcodes.NEWARRAY,Opcodes.T_BYTE));
         insnList.add(new FieldInsnNode(Opcodes.PUTFIELD,owner,"getDirtyTag","[B"));
+        //初始化_instanceId$
+        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        insnList.add(new LdcInsnNode(owner));
+        insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getInstanceId", "(Ljava/lang/String;)I", false));
+        insnList.add(new FieldInsnNode(Opcodes.PUTFIELD, owner, "_instanceId$", "I"));
 
         insnList.add(notNullLabelNode);
         lineNum += 2;
         insnList.add(new LineNumberNode(lineNum,notNullLabelNode));
         insnList.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-
 
         //创建label0标志开始
         Label l0 = new Label();
@@ -175,11 +169,13 @@ public class FieldDetectionTemplate extends Template {
                 insnList.add(new LdcInsnNode(owner));
                 insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
                 insnList.add(new InsnNode(Opcodes.ICONST_0));
+                insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "_instanceId$", "I"));
                 if(putTag){
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
                 }
                 else{
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
                 }
                 if(returnLabelIndex == -1){
                     returnLabel = new Label();
@@ -195,11 +191,13 @@ public class FieldDetectionTemplate extends Template {
                 insnList.add(new LdcInsnNode(owner));
                 insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
                 insnList.add(new InsnNode(Opcodes.ICONST_1));
+                insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "_instanceId$", "I"));
                 if(putTag){
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
                 }
                 else{
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
                 }
                 Label modifyTagLabel = new Label();
                 labelList.add(modifyTagLabel);
@@ -282,7 +280,7 @@ public class FieldDetectionTemplate extends Template {
     }
 
     /**
-     * 构建FieldDetection中对Method的模版
+     * 构建ConstructSite中对Method的模版
      * @param sourceFieldNameList
      * @param owner
      */
@@ -300,7 +298,7 @@ public class FieldDetectionTemplate extends Template {
 
 
 
-    public FieldDetectionTemplate(){
+    public ConstructSiteTemplate(){
         List<String> classNameList = SystemConfig.getInstance().getInterestringClassNameList();
         for(String className : classNameList){
             List<String> fieldNameList = SystemConfig.getInstance().getFieldNameList(className);
@@ -310,4 +308,5 @@ public class FieldDetectionTemplate extends Template {
     }
 
 }
+
 

@@ -20,14 +20,19 @@ import static org.objectweb.asm.Opcodes.ASM8;
 /**
  * 目前提供的功能：
  * 1、Field和Method的新增
- * 2、构造函数指令的适配器constructAdviceAdapter（覆盖constructAdviceAdapter 并重写get 和set方法）
+ * 2、构造函数指令的适配器constructAdviceAdapter（覆盖constructAdviceAdapter 并重写get 和set方法）(有bug)
  * 3、所有函数指令的适配器allMethodVisitorAdapter (覆盖allMethodVisitorAdapter 并重写get 和set方法)
+ * 4。构造函数指令的适配器constructMethodVisitorAdapter(覆盖constructMethodVisitorAdapter 并重写get 和set方法)
  */
 public abstract class NextAdapter extends ClassVisitor {
     //当前操作的类的internal name
     protected String owner = "";
     //当前操作的类是否是关注类
     protected boolean interestring = false;
+    //当前操作的类是否是环境类
+    protected boolean environment = false;
+    //当前操作的类是否是内部类
+    protected boolean isInnerClass = false;
     //用户的配置
     protected SystemConfig systemConfig = SystemConfig.getInstance();
     //TODO：templates应该在哪里构建？
@@ -55,16 +60,24 @@ public abstract class NextAdapter extends ClassVisitor {
         return this.allMethodVisitorAdapter;
     }
 
-    protected void setAllMethodVisitorAdapter(MethodVisitor mv){
+    protected void setAllMethodVisitorAdapter(MethodVisitor mv,String methodName,String methodDesc){
         this.allMethodVisitorAdapter.setMv(mv);
+        this.allMethodVisitorAdapter.setMethodName(methodName);
+        this.allMethodVisitorAdapter.setMethodDesc(methodDesc);
+        this.allMethodVisitorAdapter.setOwner(this.owner);
+        this.allMethodVisitorAdapter.setInnerClass(this.isInnerClass);
     }
     protected MethodVisitorAdapter getConstructMethodVisitorAdapter(){
         return this.constructMethodVisitorAdapter;
     }
 
-    protected void setConstructMethodVisitorAdapter(MethodVisitor mv){
+
+    protected void setConstructMethodVisitorAdapter(MethodVisitor mv,String methodName,String methodDesc){
         this.constructMethodVisitorAdapter.setMv(mv);
         this.constructMethodVisitorAdapter.setOwner(this.owner);
+        this.constructMethodVisitorAdapter.setMethodName(methodName);
+        this.constructMethodVisitorAdapter.setMethodDesc(methodDesc);
+        this.allMethodVisitorAdapter.setInnerClass(this.isInnerClass);
     }
     /**
      * 构造函数
@@ -85,22 +98,39 @@ public abstract class NextAdapter extends ClassVisitor {
         /*
           检查这个类是否是关注类，保证后续操作只针对关注类
          */
-        this.owner = name;
-        interestring = systemConfig.isInterestringClass(name);
-        //只关注类
-        interestring = interestring && ((access & Opcodes.ACC_INTERFACE) == 0);
-        cv.visit(version, access, name, signature, superName, interfaces);
+        if(this.cv != null){
+            this.owner = name;
+            this.interestring = this.systemConfig.isInterestringClass(name);
+            this.environment = this.systemConfig.isEnvironmentClass(name);
+            //只关注类
+            this.interestring = interestring && ((access & Opcodes.ACC_INTERFACE) == 0);
+            //只关注环境类
+            this.environment = environment && ((access & Opcodes.ACC_INTERFACE) == 0);
+            this.cv.visit(version, access, name, signature, superName, interfaces);
+        }
+
+    }
+
+    @Override
+    public void visitOuterClass(String owner, String name, String descriptor) {
+        this.isInnerClass = true;
+        if (this.cv != null) {
+            this.cv.visitOuterClass(owner, name, descriptor);
+        }
+
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-
+        if(this.cv == null){
+            return null;
+        }
         //先放到链中的后执行
-        MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
-        if(mv != null && interestring){
+        MethodVisitor mv = this.cv.visitMethod(access, name, descriptor, signature, exceptions);
+        if(mv != null && (interestring||environment)){
             if(name.equals("<init>")){
                 if(this.getConstructMethodVisitorAdapter() != null){
-                    this.setConstructMethodVisitorAdapter(mv);
+                    this.setConstructMethodVisitorAdapter(mv,name,descriptor);
                     mv = this.getConstructMethodVisitorAdapter();
                 }
 //                if(this.getConstructAdviceAdapter() != null){
@@ -109,7 +139,7 @@ public abstract class NextAdapter extends ClassVisitor {
 //                }
             }
             if(this.getAllMethodVisitorAdapter() != null){
-                this.setAllMethodVisitorAdapter(mv);
+                this.setAllMethodVisitorAdapter(mv,name,descriptor);
                 mv = this.getAllMethodVisitorAdapter();
             }
 
@@ -137,7 +167,7 @@ public abstract class NextAdapter extends ClassVisitor {
         for(Template template : templates){
             List<MethodModel> newMethodModels = template.getNewMethodInfos(this.owner);
             for(MethodModel newMethodModel : newMethodModels){
-                MethodVisitor mv = cv.visitMethod(newMethodModel.getAccess(), newMethodModel.getName(),
+                MethodVisitor mv = this.cv.visitMethod(newMethodModel.getAccess(), newMethodModel.getName(),
                         newMethodModel.getDescriptor(), newMethodModel.getSignature(), newMethodModel.getExceptions());
                 AddInsns(mv,newMethodModel.getInsnList());
             }
@@ -158,11 +188,14 @@ public abstract class NextAdapter extends ClassVisitor {
 
     @Override
     public void visitEnd(){
-        //只针对关注类进行Field和Method的添加操作
-        if(this.interestring){
-            AddFields();
-            AddMethods();
+        if(this.cv != null){
+            //只针对关注类进行Field和Method的添加操作
+            if(this.interestring){
+                AddFields();
+                AddMethods();
+            }
         }
+
 
     }
 }

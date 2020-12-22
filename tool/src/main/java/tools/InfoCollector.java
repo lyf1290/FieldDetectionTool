@@ -1,15 +1,23 @@
 package tools;
 
+import javafx.util.Pair;
+import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
 
+<<<<<<< HEAD
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+=======
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+>>>>>>> 0d829d70958a6f8720f094df6af7ab4e189aa580
 
 import com.google.common.collect.Maps;
 
@@ -19,8 +27,10 @@ import com.google.common.collect.Maps;
 public class InfoCollector {
 
     private static Map<String, ClassInfo> classInfoMap = new HashMap<>();
-
+    private static Map<Long, Stack<CallSite>> callStackMap = new HashMap<>();
+    private static Map<String,Lock> lockMap = new HashMap<>();
     static {
+
         classInfoMap.clear();
         List<String> classNameList = SystemConfig.getInstance().getInterestringClassNameList();
         for (String className : classNameList) {
@@ -60,28 +70,70 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-
-    public static void show(String agentArgs) {
-        try {
-            String[] ss = agentArgs.split("/");
-            ss = java.util.Arrays.copyOf(ss, ss.length - 1);
-            PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
-                    true);
-            System.setOut(out);
-            Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
-            map.forEach((key, value) -> {
-                System.out.print("ClassName : " + key + "\t");
-                value.show();
-            });
-            out.close();
-        }
-
-        // classInfoMap.forEach((key, value) -> {
-        // System.out.print("ClassName : " + key + "\t");
-        // value.show();
-        // });
-        catch (Exception e) {
-        }
+    public static void putField(String className,String fieldName,boolean first,int instanceId){
+        classInfoMap.get(className).putField(fieldName,instanceId);
     }
 
+    public static void getField(String className,String fieldName,boolean first,int instanceId){
+        classInfoMap.get(className).getField(fieldName,instanceId);
+    }
+    public static void show(){
+        classInfoMap.forEach((key, value) -> {
+            System.out.print("ClassName : " + key + "\t");
+            value.show();
+        });
+    }
+    public static void showConstructSite(){
+        System.out.println();
+        classInfoMap.forEach((key, value) -> {
+            System.out.println("ClassName : " + key + "\t");
+            value.showConstructSite();
+            System.out.println();
+        });
+    }
+    public static  int getInstanceId(String className){
+        if(!lockMap.containsKey(className)){
+            lockMap.put(className,new ReentrantLock());
+        }
+        Lock lock = lockMap.get(className);
+        int instanceId = -1;
+        lock.lock();
+        try{
+            classInfoMap.get(className).newInstance(callStackMap.get(Thread.currentThread().getId()));
+            instanceId = classInfoMap.get(className).getInstanceCount();
+        }finally {
+            lock.unlock();
+        }
+        if(instanceId == -1){
+            System.out.println("getInstanceId ERROR : instanceId = -1");
+        }
+        return instanceId;
+    }
+    public static void pushStack(String className,String methodName,String methodDesc){
+        Long threadId = Thread.currentThread().getId();
+        if(callStackMap.containsKey(threadId)){
+            //该线程已经有一个stack了
+            Stack<CallSite> callStack =  callStackMap.get(threadId);
+            callStack.push(new CallSite(className,methodName,methodDesc));
+
+        }
+        else{
+            Stack<CallSite> callStack =  new Stack<>();
+            callStack.push(new CallSite(className,methodName,methodDesc));
+            callStackMap.put(threadId,callStack);
+        }
+    }
+    public static void popStack(){
+        Long threadId = Thread.currentThread().getId();
+        if(callStackMap.containsKey(threadId)){
+            //该线程已经有一个stack了
+            Stack<CallSite> callStack =  callStackMap.get(threadId);
+            callStack.pop();
+
+        }
+        else{
+            System.out.println("popStack ERROR : threadID  = "+Thread.currentThread().getId());
+
+        }
+    }
 }
