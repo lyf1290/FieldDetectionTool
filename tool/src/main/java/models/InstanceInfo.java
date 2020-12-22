@@ -6,12 +6,14 @@ import java.util.Map;
 import java.util.Stack;
 
 public class InstanceInfo {
-    Stack<CallSite> constructSite = new Stack<>();
+    //Stack<CallSite> constructSite = new Stack<>();
+    String[] constructSite;
     Map<String,Integer> fieldPutCountMap = new HashMap<>();
     Map<String,Integer> fieldGetCountMap = new HashMap<>();
-    public InstanceInfo(Stack<CallSite> callSiteStack,List<String> fieldNameList){
+    public InstanceInfo(String[] constructSite,List<String> fieldNameList){
 
-        this.constructSite.addAll(callSiteStack);
+        this.constructSite = constructSite.clone();
+
         for(String fieldName : fieldNameList){
             this.fieldGetCountMap.put(fieldName,0);
             this.fieldPutCountMap.put(fieldName,0);
@@ -26,7 +28,7 @@ public class InstanceInfo {
     }
     public void show(){
         System.out.println("ConstructSite : ");
-        for(Object callSite : this.constructSite.toArray()) {
+        for(Object callSite : this.constructSite) {
             System.out.println(callSite);
         }
         System.out.println("FieldInfo : ");
