@@ -9,6 +9,9 @@ import user.UserConfig;
  */
 public class MethodVisitorAdapter extends MethodVisitor {
     protected String owner;
+    protected String methodName;
+    protected String methodDesc;
+    protected boolean isInnerClass;
     public MethodVisitorAdapter(int api) {
         super(api);
     }
@@ -21,5 +24,24 @@ public class MethodVisitorAdapter extends MethodVisitor {
     public String getOwner(){
         return this.owner;
     }
+    public void setMethodName(String methodName){
+        this.methodName = methodName;
+    }
+    public void setMethodDesc(String methodDesc){
+        this.methodDesc = methodDesc;
+    }
+    public String getMethodName(){
+        return this.methodName;
+    }
+    public String getMethodDesc(){
+        return this.methodDesc;
+    }
 
+    public boolean isInnerClass() {
+        return isInnerClass;
+    }
+
+    public void setInnerClass(boolean innerClass) {
+        isInnerClass = innerClass;
+    }
 }

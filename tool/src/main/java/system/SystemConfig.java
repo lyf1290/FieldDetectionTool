@@ -24,12 +24,19 @@ public class SystemConfig {
 
     //用户关注的类在JVM中的internal name  例如com/Student
     private List<String> interestringClassNameList = new ArrayList<>();
+    //环境类在JVM中的internal name  例如com/Student
+    private List<String> environmentClassNameList = new ArrayList<>();
     //用户关注类在用户系统中的绝对路径，
     private List<String> interestringClassFilesPathList;
+    //关注类的环境类在用户系统中的绝对路径
+    private List<String> environmentClassFilesPathList;
 
+    private int constructSiteSize = 2;
 
     private SystemConfig(){
         this.interestringClassFilesPathList = UserConfig.getInstance().getInterestringClassFilesPathList();
+        this.environmentClassFilesPathList = UserConfig.getInstance().getEnvironmentClassFilesPathList();
+        this.constructSiteSize = UserConfig.getInstance().getConstructSiteSize();
         this.init();
     }
 
@@ -61,6 +68,16 @@ public class SystemConfig {
             if(!extendFlagMap.get(entry.getKey())){
                 extendFieldMap(extendFlagMap,entry.getKey());
             }
+        }
+        //通过用户关注的类的路径，获得该class文件的字节码，解析获得internal name
+        for(String environmentClassFilesPath : this.environmentClassFilesPathList){
+            byte[] interestringClassByteCodes = ByteCodeTool.input(environmentClassFilesPath);
+            ClassReader cr = new ClassReader(interestringClassByteCodes);
+            ClassNode sourceNode = new ClassNode();
+            cr.accept(sourceNode,0);
+            //将环境类的名字记录下来
+            this.environmentClassNameList.add(sourceNode.name);
+
         }
 
     }
@@ -100,7 +117,7 @@ public class SystemConfig {
         return this.outerClassNameMap.get(className);
     }
     public boolean isInterestringClass(String className){
-        for(String interestringClassName : interestringClassNameList){
+        for(String interestringClassName : this.interestringClassNameList){
             if(interestringClassName.equals(className)){
                 return true;
             }
@@ -117,8 +134,18 @@ public class SystemConfig {
         return this.interestringClassFilesPathList;
     }
 
-    public static void main(String args[]){
-
-
+    public boolean isEnvironmentClass(String className){
+        for(String environmentClassName : this.environmentClassNameList){
+            if(environmentClassName.equals(className)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public int getConstructSiteSize() {
+        return constructSiteSize;
+    }
+    public void setConstructSiteSize(int constructSiteSize){
+        this.constructSiteSize = constructSiteSize;
     }
 }
