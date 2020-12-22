@@ -1,6 +1,5 @@
 package tools;
 
-import javafx.util.Pair;
 import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
@@ -9,6 +8,8 @@ import user.UserConfig;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.google.common.collect.Maps;
 
 /**
  * 暂时只考虑单线程
@@ -23,42 +24,42 @@ public class InfoCollector {
 
         classInfoMap.clear();
         List<String> classNameList = SystemConfig.getInstance().getInterestringClassNameList();
-        for(String className : classNameList){
-            classInfoMap.put(className,new ClassInfo(SystemConfig.getInstance().getFieldNameList(className)));
+        for (String className : classNameList) {
+            classInfoMap.put(className, new ClassInfo(SystemConfig.getInstance().getFieldNameList(className)));
         }
-//        List<String> fieldNames1 = new ArrayList<>();
-//        fieldNames1.add("test");
-//        fieldNames1.add("test1");
-//        fieldNames1.add("test2");
-//        fieldNames1.add("testF");
-//        List<String> fieldNames2 = new ArrayList<>();
-//        fieldNames2.add("testF");
-//        classInfoMap.put("Test",new ClassInfo(fieldNames1));
-//        classInfoMap.put("TestFather",new ClassInfo(fieldNames2));
+        // List<String> fieldNames1 = new ArrayList<>();
+        // fieldNames1.add("test");
+        // fieldNames1.add("test1");
+        // fieldNames1.add("test2");
+        // fieldNames1.add("testF");
+        // List<String> fieldNames2 = new ArrayList<>();
+        // fieldNames2.add("testF");
+        // classInfoMap.put("Test",new ClassInfo(fieldNames1));
+        // classInfoMap.put("TestFather",new ClassInfo(fieldNames2));
     }
 
-    public static void setClassInfoMap(Map<String, ClassInfo> classInfoMap){
+    public static void setClassInfoMap(Map<String, ClassInfo> classInfoMap) {
         InfoCollector.classInfoMap = classInfoMap;
     }
 
-    public static Map<String, ClassInfo> getClassInfoMap(){
+    public static Map<String, ClassInfo> getClassInfoMap() {
         return InfoCollector.classInfoMap;
     }
 
-    public static void newInstance(String className){
+    public static void newInstance(String className) {
         classInfoMap.get(className).newInstance();
     }
 
-    public static void descInstanceCount(String className){
+    public static void descInstanceCount(String className) {
         classInfoMap.get(className).descInstanceCount();
     }
 
-    public static void putField(String className,String fieldName,boolean first){
-        classInfoMap.get(className).putField(fieldName,first);
+    public static void putField(String className, String fieldName, boolean first) {
+        classInfoMap.get(className).putField(fieldName, first);
     }
 
-    public static void getField(String className,String fieldName,boolean first){
-        classInfoMap.get(className).getField(fieldName,first);
+    public static void getField(String className, String fieldName, boolean first) {
+        classInfoMap.get(className).getField(fieldName, first);
     }
     public static void putField(String className,String fieldName,boolean first,int instanceId){
         classInfoMap.get(className).putField(fieldName,instanceId);

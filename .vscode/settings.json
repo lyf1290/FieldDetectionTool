@@ -1,0 +1,10 @@
+{
+  "java.home": "/home/liziming/openjdk/14",
+  "java.configuration.runtimes": [{
+    "name": "JavaSE-14",
+    "path": "/home/liziming/openjdk/14",
+    "default": true
+  }
+],
+"java.configuration.updateBuildConfiguration": "automatic",
+}
