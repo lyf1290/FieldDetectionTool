@@ -1,3 +1,4 @@
 /Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test.class
 /Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/TestFather.class
 /Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test$Inner.class
+/Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Main.class

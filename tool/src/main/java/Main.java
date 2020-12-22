@@ -23,7 +23,6 @@ public class Main {
         test.getTest();
         Test.Inner inner = test.new Inner();
 
-
     }
 }
 
