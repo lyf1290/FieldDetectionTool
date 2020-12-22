@@ -13,9 +13,10 @@ public class UserConfig {
 
     //用户关注的类在JVM中的internal name  例如com/Student
     private List<String> interestringClassFilesPathList = new ArrayList<>();
-    private final List<String> environmentClassFilesPathList = new ArrayList<>();
+    private List<String> environmentClassFilesPathList = new ArrayList<>();
     private String mode = "FieldDetection";
     private String userConfigFilePath = "";
+    private String environmentConfigFilePath = "";
     private int constructSiteSize = 2;
     private final static UserConfig USER_CONFIG = new UserConfig();
     public static UserConfig getInstance(){
@@ -31,13 +32,20 @@ public class UserConfig {
             File f = new File(this.userConfigFilePath);
             this.interestringClassFilesPathList = new ArrayList<>();
             this.interestringClassFilesPathList = FileUtils.readLines(f, "UTF-8");
-            this.environmentClassFilesPathList.add("/Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test.class");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            File f = new File(this.environmentConfigFilePath);
+            this.environmentClassFilesPathList = new ArrayList<>();
+            this.environmentClassFilesPathList = FileUtils.readLines(f, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void setUserConfigFilePath(String userConfigFilePath){
+    public void setConfigFilePath(String userConfigFilePath,String environmentConfigFilePath){
         this.userConfigFilePath = userConfigFilePath;
+        this.environmentConfigFilePath = environmentConfigFilePath;
         this.init();
     }
     public void setMode(String mode){

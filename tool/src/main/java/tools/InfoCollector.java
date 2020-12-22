@@ -107,18 +107,22 @@ public class InfoCollector {
             //该线程已经有一个stack了
             Stack<CallSite> callStack =  callStackMap.get(threadId);
             callStack.push(new CallSite(className,methodName,methodDesc));
+
             constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.size())];
-            for(int i = 0; i < constructSite.length; ++i){
-                constructSite[i] = callStack.elementAt(i).toString();
+            for(int i = callStack.size() - 1,j = 0; i >= callStack.size() - constructSite.length; --i,j++){
+                constructSite[j] = callStack.elementAt(i).toString();
+
             }
+
         }
         else{
             Stack<CallSite> callStack =  new Stack<>();
             callStack.push(new CallSite(className,methodName,methodDesc));
             callStackMap.put(threadId,callStack);
             constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.size())];
-            for(int i = 0; i < constructSite.length; ++i){
-                constructSite[i] = callStack.elementAt(i).toString();
+            for(int i = callStack.size() - 1,j = 0; i >= callStack.size() - constructSite.length; --i,j++){
+                constructSite[j] = callStack.elementAt(i).toString();
+
             }
 
 

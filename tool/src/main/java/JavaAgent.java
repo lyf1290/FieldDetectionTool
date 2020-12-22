@@ -17,17 +17,18 @@ import java.util.List;
 public class JavaAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
         List<String> args = Arrays.asList(agentArgs.split(":"));
-        if(args.size() < 2){
-            System.out.println("ERROR agentArgs size! Expecting args size = 2,divided by :");
+        if(args.size() < 4){
+            System.out.println("ERROR agentArgs size! Expecting args size = 4,divided by :");
             return;
         }
-        if(!args.get(1).equals("FieldDetection") && !args.get(1).equals("ConstructSite")){
+        if(!args.get(2).equals("FieldDetection") && !args.get(2).equals("ConstructSite")){
             System.out.println("ERROR tool type! Expecting FieldDetection or ConstructSite");
             return;
         }
-        UserConfig.getInstance().setUserConfigFilePath(args.get(0));
-        UserConfig.getInstance().setMode(args.get(1));
+        UserConfig.getInstance().setConfigFilePath(args.get(0),args.get(1));
 
+        UserConfig.getInstance().setMode(args.get(2));
+        UserConfig.getInstance().setConstructSiteSize(Integer.parseInt(args.get(3)));
         for(String arg: args){
             System.out.println(arg);
         }
@@ -51,7 +52,7 @@ public class JavaAgent {
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                 ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            if (SystemConfig.getInstance().isInterestringClass(className)) {
+            if (SystemConfig.getInstance().isInterestringClass(className) || (SystemConfig.getInstance().isEnvironmentClass(className) && UserConfig.getInstance().getMode().equals("ConstructSite"))) {
                 System.out.println(className);
                 ClassReader cr = new ClassReader(classfileBuffer);
                 ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
