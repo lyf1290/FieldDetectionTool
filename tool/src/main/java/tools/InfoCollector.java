@@ -5,6 +5,8 @@ import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -18,7 +20,7 @@ public class InfoCollector {
 
     private static Map<String, ClassInfo> classInfoMap = new HashMap<>();
     private static Map<Long, Stack<CallSite>> callStackMap = new HashMap<>();
-    private static Map<String,Lock> lockMap = new HashMap<>();
+    private static Map<String, Lock> lockMap = new HashMap<>();
     static {
 
         classInfoMap.clear();
@@ -60,20 +62,44 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-    public static void putField(String className,String fieldName,boolean first,int instanceId){
-        classInfoMap.get(className).putField(fieldName,instanceId);
+
+    public static void putField(String className, String fieldName, boolean first, int instanceId) {
+        classInfoMap.get(className).putField(fieldName, instanceId);
     }
 
-    public static void getField(String className,String fieldName,boolean first,int instanceId){
-        classInfoMap.get(className).getField(fieldName,instanceId);
+    public static void getField(String className, String fieldName, boolean first, int instanceId) {
+        classInfoMap.get(className).getField(fieldName, instanceId);
     }
-    public static void show(){
-        classInfoMap.forEach((key, value) -> {
-            System.out.print("ClassName : " + key + "\t");
-            value.show();
-        });
+
+    public static void show(String agentArgs) {
+        try {
+            String[] ss = agentArgs.split("/");
+            ss = java.util.Arrays.copyOf(ss, ss.length - 1);
+            PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
+                    true);
+            // PrintStream out = new
+            // PrintStream("/home/liziming/software-analyze/elasticsearch-7.9.3/testoutput.txt");
+            System.setOut(out);
+            // List<String> classNameList =
+            // SystemConfig.getInstance().getInterestringClassNameList();
+            // for (String className : classNameList) {
+            // System.out.println("interest ClassName : " + className);
+            // }
+            Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
+            map.forEach((key, value) -> {
+                System.out.print("ClassName : " + key + "\t");
+                value.show();
+            });
+
+            out.close();
+
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
     }
-    public static void showConstructSite(){
+
+    public static void showConstructSite() {
         System.out.println();
         classInfoMap.forEach((key, value) -> {
             System.out.println("ClassName : " + key + "\t");
@@ -81,48 +107,49 @@ public class InfoCollector {
             System.out.println();
         });
     }
-    public static  int getInstanceId(String className){
-        if(!lockMap.containsKey(className)){
-            lockMap.put(className,new ReentrantLock());
+
+    public static int getInstanceId(String className) {
+        if (!lockMap.containsKey(className)) {
+            lockMap.put(className, new ReentrantLock());
         }
         Lock lock = lockMap.get(className);
         int instanceId = -1;
         lock.lock();
-        try{
+        try {
             classInfoMap.get(className).newInstance(callStackMap.get(Thread.currentThread().getId()));
             instanceId = classInfoMap.get(className).getInstanceCount();
-        }finally {
+        } finally {
             lock.unlock();
         }
-        if(instanceId == -1){
+        if (instanceId == -1) {
             System.out.println("getInstanceId ERROR : instanceId = -1");
         }
         return instanceId;
     }
-    public static void pushStack(String className,String methodName,String methodDesc){
-        Long threadId = Thread.currentThread().getId();
-        if(callStackMap.containsKey(threadId)){
-            //该线程已经有一个stack了
-            Stack<CallSite> callStack =  callStackMap.get(threadId);
-            callStack.push(new CallSite(className,methodName,methodDesc));
 
-        }
-        else{
-            Stack<CallSite> callStack =  new Stack<>();
-            callStack.push(new CallSite(className,methodName,methodDesc));
-            callStackMap.put(threadId,callStack);
+    public static void pushStack(String className, String methodName, String methodDesc) {
+        Long threadId = Thread.currentThread().getId();
+        if (callStackMap.containsKey(threadId)) {
+            // 该线程已经有一个stack了
+            Stack<CallSite> callStack = callStackMap.get(threadId);
+            callStack.push(new CallSite(className, methodName, methodDesc));
+
+        } else {
+            Stack<CallSite> callStack = new Stack<>();
+            callStack.push(new CallSite(className, methodName, methodDesc));
+            callStackMap.put(threadId, callStack);
         }
     }
-    public static void popStack(){
+
+    public static void popStack() {
         Long threadId = Thread.currentThread().getId();
-        if(callStackMap.containsKey(threadId)){
-            //该线程已经有一个stack了
-            Stack<CallSite> callStack =  callStackMap.get(threadId);
+        if (callStackMap.containsKey(threadId)) {
+            // 该线程已经有一个stack了
+            Stack<CallSite> callStack = callStackMap.get(threadId);
             callStack.pop();
 
-        }
-        else{
-            System.out.println("popStack ERROR : threadID  = "+Thread.currentThread().getId());
+        } else {
+            System.out.println("popStack ERROR : threadID  = " + Thread.currentThread().getId());
 
         }
     }
