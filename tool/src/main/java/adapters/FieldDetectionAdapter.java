@@ -14,7 +14,7 @@ import static org.objectweb.asm.Opcodes.ASM8;
 * （2）将特定方法转交给AdviceAdapter和MethodAdapter
 * */
 
-//TODO 父类构造函数中的计数问题
+//TODO 父类构造函数中的计数问题(子类覆盖父类的域在父类中的修改不应该该计数)
 
 public class FieldDetectionAdapter extends NextAdapter  {
     //往方法开头结尾插入指令的Adatper（在构造函数中父类的区域的初始化指令后是开头）
