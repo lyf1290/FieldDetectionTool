@@ -18,24 +18,25 @@ public class JavaAgent {
         inst.addTransformer(new DefineTransformer(), true);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
-            public void run()
-            {
-                InfoCollector.show();
+            public void run() {
+                InfoCollector.show(agentArgs);
             }
         }));
     }
+
     static class DefineTransformer implements ClassFileTransformer {
 
         @Override
-        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            if(SystemConfig.getInstance().isInterestringClass(className)){
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+            if (SystemConfig.getInstance().isInterestringClass(className)) {
                 System.out.println(className);
                 ClassReader cr = new ClassReader(classfileBuffer);
-                ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
+                ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
 
-                //选择一个adpter去适配cr
-                FieldDetectionAdapter fda = new FieldDetectionAdapter(Opcodes.ASM8,cw);
-                cr.accept(fda,0);
+                // 选择一个adpter去适配cr
+                FieldDetectionAdapter fda = new FieldDetectionAdapter(Opcodes.ASM8, cw);
+                cr.accept(fda, 0);
 
                 return cw.toByteArray();
             }

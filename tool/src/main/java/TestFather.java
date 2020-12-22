@@ -7,13 +7,13 @@ public class TestFather {
 
         new Test(1);
         new TestFather();
-        InfoCollector.show();
+        InfoCollector.show("aaa");
     }
 
     public static void main(String args[]){
         new Test(1);
         new TestFather();
-        InfoCollector.show();
+        InfoCollector.show(args[0]);
 
     }
 }

@@ -19,7 +19,7 @@ public class Test extends TestFather{
         Test test = new Test(1);
         test.getTest();
         test.getTest();
-        InfoCollector.show();
+        InfoCollector.show(args[0]);
 //        Class<?> clazz = Test.class;
 //        Test test = new Test();
 //        try {
