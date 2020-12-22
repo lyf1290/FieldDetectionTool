@@ -1,23 +1,13 @@
 package tools;
 
-import javafx.util.Pair;
 import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
 
-<<<<<<< HEAD
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-=======
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
->>>>>>> 0d829d70958a6f8720f094df6af7ab4e189aa580
 
 import com.google.common.collect.Maps;
 
