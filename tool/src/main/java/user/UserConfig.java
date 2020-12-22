@@ -31,7 +31,6 @@ public class UserConfig {
             File f = new File(this.userConfigFilePath);
             this.interestringClassFilesPathList = new ArrayList<>();
             this.interestringClassFilesPathList = FileUtils.readLines(f, "UTF-8");
-            this.environmentClassFilesPathList.add("/Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test.class");
         } catch (IOException e) {
             e.printStackTrace();
         }
