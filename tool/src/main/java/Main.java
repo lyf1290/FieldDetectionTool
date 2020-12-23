@@ -1,5 +1,6 @@
 import adapters.ConstructSiteAdapter;
 import adapters.FieldDetectionAdapter;
+import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -8,6 +9,8 @@ import tools.ByteCodeTool;
 import tools.InfoCollector;
 import user.UserConfig;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +20,19 @@ import static org.objectweb.asm.Opcodes.ASM8;
 public class Main {
     private final static int ASM_VERSION = ASM8;
 
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException {
         Test test = new Test(1);
         test.getTest();
         test.getTest();
         Test.Inner inner = test.new Inner();
+
+        byte[] sourceByteCodes= null;
+
+        try {
+            sourceByteCodes = FileUtils.readFileToByteArray(new File("sourceClassPath"));
+        } finally {
+            System.out.println("asdasd");
+        }
 
 
     }

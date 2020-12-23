@@ -17,7 +17,7 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
     public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
         if (this.mv != null) {
             //this$是内部类中外部类域的名字开头
-            if(systemConfig.isInterestringClass(owner) && !name.startsWith("this$")){
+            if(systemConfig.isInterestringClass(owner) && !name.contains("$")){
                 if(opcode == Opcodes.PUTFIELD){
                     if(descriptor.equals("J") || descriptor.equals("D")){
                         this.mv.visitInsn(Opcodes.DUP2_X1);
@@ -44,7 +44,7 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
                 }
             }
             this.mv.visitFieldInsn(opcode, owner, name, descriptor);
-            if(systemConfig.isInterestringClass(owner) && !name.startsWith("this$")){
+            if(systemConfig.isInterestringClass(owner) && !name.contains("$")){
                 if(opcode == Opcodes.PUTFIELD){
                     //对于putfield操作，
                     if(!descriptor.equals("J") && !descriptor.equals("D")){
