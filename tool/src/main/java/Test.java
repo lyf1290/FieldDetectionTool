@@ -17,7 +17,6 @@ public class Test extends TestFather{
 
     public Test(int k) {
 
-
     }
     public Test() {
         this.test = 2;

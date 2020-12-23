@@ -23,6 +23,7 @@ public class Main {
         test.getTest();
         Test.Inner inner = test.new Inner();
 
+
     }
 }
 
@@ -35,10 +36,10 @@ public class Main {
 * */
 
 //如果是被子类构造函数调用的父类构造函数，里面的this是指向子类的
-//-javaagent:/Users/liangyufei/Desktop/tool/target/tool-1.0-SNAPSHOT.jar
+//-javaagent:/Users/liangyufei/Desktop/FieldDetectionTool/tool/out/artifacts/tool_jar/tool.jar=/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt:/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/EnvironmentConfig.txt:ConstructSite:3
 /*
-UserConfig.getInstance().setUserConfigFilePath("/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt");
-
+UserConfig.getInstance().setConfigFilePath("/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt","/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/EnvironmentConfig.txt");
+        UserConfig.getInstance().setConstructSiteSize(2);
         byte[] classfileBuffer = ByteCodeTool.input("/Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test.class");
         ClassReader cr = new ClassReader(classfileBuffer);
         ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);

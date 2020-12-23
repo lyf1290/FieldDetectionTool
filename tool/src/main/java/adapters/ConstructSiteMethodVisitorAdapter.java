@@ -63,6 +63,7 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
     }
 
 
+    /*
     @Override
     public void visitCode() {
         super.visitCode();
@@ -78,27 +79,7 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
 
             }
 
-//
-//            List<String> fieldNameList = SystemConfig.getInstance().getFieldNameList(this.getOwner());
-//            if(fieldNameList != null){
-//                int fieldNum = fieldNameList.size();
-//                this.mv.visitVarInsn(Opcodes.ALOAD, 0);
-//                this.mv.visitIntInsn(Opcodes.BIPUSH, fieldNum);
-//                this.mv.visitIntInsn(Opcodes.NEWARRAY, Opcodes.T_INT);
-//                this.mv.visitFieldInsn(Opcodes.PUTFIELD, this.getOwner(), "putDirtyTag", "[I");
-//                this.mv.visitVarInsn(Opcodes.ALOAD, 0);
-//                this.mv.visitIntInsn(Opcodes.BIPUSH, fieldNum);
-//                this.mv.visitIntInsn(Opcodes.NEWARRAY, Opcodes.T_INT);
-//                this.mv.visitFieldInsn(Opcodes.PUTFIELD, this.getOwner(), "getDirtyTag", "[I");
-//
-//                this.mv.visitLdcInsn(this.owner);
-//                this.mv.visitMethodInsn(Opcodes.INVOKESTATIC,"tools/InfoCollector","newInstance","(Ljava/lang/String;)V",false);
-//                String parentClassName = SystemConfig.getInstance().getParentClassName(this.getOwner());
-//                if(parentClassName != null && SystemConfig.getInstance().isInterestringClass(parentClassName)){
-//                    this.mv.visitLdcInsn(parentClassName);
-//                    this.mv.visitMethodInsn(Opcodes.INVOKESTATIC,"tools/InfoCollector","descInstanceCount","(Ljava/lang/String;)V",false);
-//                }
-//            }
+
         }
 
 
@@ -115,4 +96,6 @@ public class ConstructSiteMethodVisitorAdapter extends MethodVisitorAdapter {
         }
 
     }
+
+     */
 }
