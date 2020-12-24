@@ -4,13 +4,15 @@ import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
-
+import java.sql.Time;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 
 /**
@@ -76,23 +78,32 @@ public class InfoCollector {
         try {
             String[] ss = agentArgs.split("/");
             ss = java.util.Arrays.copyOf(ss, ss.length - 1);
-            PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
-                    true);
+            // PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
+            //         true);
             // PrintStream out = new
+            
             // PrintStream("/home/liziming/software-analyze/elasticsearch-7.9.3/testoutput.txt");
-            System.setOut(out);
+            //System.setOut(out);
             // List<String> classNameList =
             // SystemConfig.getInstance().getInterestringClassNameList();
             // for (String className : classNameList) {
             // System.out.println("interest ClassName : " + className);
             // }
             Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
-            map.forEach((key, value) -> {
-                System.out.print("ClassName : " + key + "\t");
-                value.show();
-            });
+            if (map.size()>0){
+                FileOutputStream file=new FileOutputStream(String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json");
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(file,map);
+                file.close();
+            }
+           
+            // map.forEach((key, value) -> {
+            //     System.out.print("ClassName : " + key + "\t");
+            //     value.show();
+            // });
 
-            out.close();
+            //out.close();
+            
 
         } catch (Exception e) {
             // TODO: handle exception

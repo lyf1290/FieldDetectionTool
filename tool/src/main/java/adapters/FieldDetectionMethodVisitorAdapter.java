@@ -19,7 +19,7 @@ public class FieldDetectionMethodVisitorAdapter extends MethodVisitorAdapter {
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
         if (this.mv != null) {
-            if(systemConfig.isInterestringClass(owner) && !name.startsWith("this$")){
+            if(systemConfig.isInterestringClass(owner) && !name.contains("$")){
                 if(opcode == Opcodes.PUTFIELD){
                     if(descriptor.equals("J") || descriptor.equals("D")){
                         this.mv.visitInsn(Opcodes.DUP2_X1);
@@ -48,7 +48,7 @@ public class FieldDetectionMethodVisitorAdapter extends MethodVisitorAdapter {
             }
             this.mv.visitFieldInsn(opcode, owner, name, descriptor);
 
-            if(systemConfig.isInterestringClass(owner) && !name.startsWith("this$")){
+            if(systemConfig.isInterestringClass(owner) && !name.contains("$")){
                 if(opcode == Opcodes.PUTFIELD){
                     //对于putfield操作，
                     if(!descriptor.equals("J") && !descriptor.equals("D")){
