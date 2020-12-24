@@ -13,7 +13,9 @@ public class TestFather {
         new Test(1);
         new TestFather();
     }
-
+    public void ttt(){
+        System.out.println(this.test);
+    }
     public static void main(String args[]){
         new Test(1);
         new TestFather();

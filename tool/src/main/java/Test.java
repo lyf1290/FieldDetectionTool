@@ -16,7 +16,7 @@ public class Test extends TestFather{
     }
 
     public Test(int k) {
-
+        this.testF = 2;
     }
     public Test() {
         this.test = 2;
@@ -24,6 +24,11 @@ public class Test extends TestFather{
 
     public int getTest(){
         return this.test;
+    }
+
+    public void ttt(){
+        System.out.println(this.test);
+        super.ttt();
     }
 
     public static void main(String args[]){

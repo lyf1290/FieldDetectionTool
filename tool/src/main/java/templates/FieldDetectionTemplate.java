@@ -20,6 +20,7 @@ import java.util.Map;
 
 
 public class FieldDetectionTemplate extends Template {
+    private SystemConfig systemConfig = SystemConfig.getInstance();
 
     /**
      * 构造FieldDetection中对Field模版
@@ -100,6 +101,9 @@ public class FieldDetectionTemplate extends Template {
         LineNumberNode lineNumberNode = new LineNumberNode(lineNum,new LabelNode(l0));
         insnList.add(lineNumberNode);
 
+        String parentClassName = systemConfig.getParentClassName(owner);
+
+
         //将fieldName和该类原有的字段相比较
         for(int i = 0; i < sourceFieldNameList.size(); ++i){
 
@@ -177,9 +181,24 @@ public class FieldDetectionTemplate extends Template {
                 insnList.add(new InsnNode(Opcodes.ICONST_0));
                 if(putTag){
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+
+                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
+                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
+                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "putField", "(Ljava/lang/String;)V", false));
+
+                    }
+
+
                 }
                 else{
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
+                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
+                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "getField", "(Ljava/lang/String;)V", false));
+
+                    }
                 }
                 if(returnLabelIndex == -1){
                     returnLabel = new Label();
@@ -197,9 +216,21 @@ public class FieldDetectionTemplate extends Template {
                 insnList.add(new InsnNode(Opcodes.ICONST_1));
                 if(putTag){
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
+                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
+                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "putField", "(Ljava/lang/String;)V", false));
+
+                    }
                 }
                 else{
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;Z)V", false));
+                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
+                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
+                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
+                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "getField", "(Ljava/lang/String;)V", false));
+
+                    }
                 }
                 Label modifyTagLabel = new Label();
                 labelList.add(modifyTagLabel);

@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 public class SystemConfig {
-    private Map<String, List<String>> fieldNameMap = new HashMap<>();
-    private Map<String,String> parentClassNameMap = new HashMap<>();
-    private Map<String,String> outerClassNameMap = new HashMap<>();
-    private Map<String,List<String>> overwriteFieldMap = new HashMap<>();
-
+    private final Map<String, List<String>> fieldNameMap = new HashMap<>();
+    private final Map<String,String> parentClassNameMap = new HashMap<>();
+    private final Map<String,String> outerClassNameMap = new HashMap<>();
+    private final Map<String,List<String>> overwriteFieldMap = new HashMap<>();
+    private final Map<String,List<String>> parentSpecialFieldMap = new HashMap<>();
     private final static SystemConfig SYSTEM_CONFIG = new SystemConfig();
     public static SystemConfig getInstance(){
         return SYSTEM_CONFIG;
@@ -26,11 +26,11 @@ public class SystemConfig {
     //用户关注的类在JVM中的internal name  例如com/Student
     private List<String> interestringClassNameList = new ArrayList<>();
     //环境类在JVM中的internal name  例如com/Student
-    private List<String> environmentClassNameList = new ArrayList<>();
+    private final List<String> environmentClassNameList = new ArrayList<>();
     //用户关注类在用户系统中的绝对路径，
-    private List<String> interestringClassFilesPathList;
+    private final List<String> interestringClassFilesPathList;
     //关注类的环境类在用户系统中的绝对路径
-    private List<String> environmentClassFilesPathList;
+    private final List<String> environmentClassFilesPathList;
 
     private int constructSiteSize = 2;
 
@@ -99,9 +99,11 @@ public class SystemConfig {
             }
             List<String> parentFieldNameList = this.fieldNameMap.get(parentClassName);
             List<String> fieldNameList = this.fieldNameMap.get(className);
+            List<String> parentSpecialFieldNameList = new ArrayList<>();
             for(String parentFieldName : parentFieldNameList){
                 if(!fieldNameList.contains(parentFieldName)){
                     fieldNameList.add(parentFieldName);
+                    parentSpecialFieldNameList.add(parentFieldName);
                 }
                 else{
                     //父子相同的field
@@ -114,6 +116,7 @@ public class SystemConfig {
                     this.overwriteFieldMap.put(parentClassName,overWriteFieldList);
                 }
             }
+            this.parentSpecialFieldMap.put(className,parentSpecialFieldNameList);
         }
         extendFlagMap.put(className,true);
     }
@@ -166,4 +169,11 @@ public class SystemConfig {
         }
         return new ArrayList<>();
     }
+    public List<String> getParentSpecialFieldList(String className){
+        if(this.parentSpecialFieldMap.containsKey(className)){
+            return this.parentSpecialFieldMap.get(className);
+        }
+        return new ArrayList<>();
+    }
+
 }

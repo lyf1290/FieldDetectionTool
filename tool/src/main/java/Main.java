@@ -26,13 +26,6 @@ public class Main {
         test.getTest();
         Test.Inner inner = test.new Inner();
 
-        byte[] sourceByteCodes= null;
-
-        try {
-            sourceByteCodes = FileUtils.readFileToByteArray(new File("sourceClassPath"));
-        } finally {
-            System.out.println("asdasd");
-        }
 
 
     }
