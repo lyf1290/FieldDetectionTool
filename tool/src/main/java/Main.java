@@ -21,19 +21,10 @@ public class Main {
     private final static int ASM_VERSION = ASM8;
 
     public static void main(String args[]) throws IOException {
-        UserConfig.getInstance().setConfigFilePath("/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt","/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/EnvironmentConfig.txt");
-        UserConfig.getInstance().setConstructSiteSize(2);
-        byte[] classfileBuffer = ByteCodeTool.input("/Users/liangyufei/Desktop/FieldDetectionTool/tool/target/classes/Test.class");
-        ClassReader cr = new ClassReader(classfileBuffer);
-        ClassWriter cw = new ClassWriter(cr,ClassWriter.COMPUTE_MAXS);
-
-        //选择一个adpter去适配cr
-//        FieldDetectionAdapter fda = new FieldDetectionAdapter(Opcodes.ASM8,cw);
-//        cr.accept(fda,0);
-        ConstructSiteAdapter csa = new ConstructSiteAdapter(Opcodes.ASM8,cw);
-        cr.accept(csa,0);
-        ByteCodeTool.output(cw.toByteArray(),"/Users/liangyufei/Desktop/FieldDetectionTool/tool/out/Test.class");
-
+        Test test = new Test(1);
+        test.getTest();
+        test.getTest();
+        Test.Inner inner = test.new Inner();
 
 
 
