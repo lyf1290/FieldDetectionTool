@@ -4,7 +4,7 @@ public class Test extends TestFather{
     int test = 0;
     int test1 = 1;
     int test2 = 2;
-
+    static int st;
     class Inner{
         int k;
         public Inner(){
@@ -12,11 +12,13 @@ public class Test extends TestFather{
         }
         public void getTest(){
             this.k = 1;
+
         }
     }
 
     public Test(int k) {
         this.testF = 2;
+        st = 1;
     }
     public Test() {
         this.test = 2;

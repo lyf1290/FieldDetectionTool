@@ -1,6 +1,7 @@
 package system;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import tools.ByteCodeTool;
@@ -61,7 +62,10 @@ public class SystemConfig {
             this.outerClassNameMap.put(sourceNode.name,sourceNode.outerClass);
             List<String> fieldNames = new ArrayList<>();
             for(FieldNode fieldNode : sourceNode.fields){
-                fieldNames.add(fieldNode.name);
+                //不关注static类型的
+                if((fieldNode.access & Opcodes.ACC_STATIC) == 0){
+                    fieldNames.add(fieldNode.name);
+                }
             }
             fieldNameMap.put(sourceNode.name,fieldNames);
         }
@@ -101,6 +105,7 @@ public class SystemConfig {
             List<String> fieldNameList = this.fieldNameMap.get(className);
             List<String> parentSpecialFieldNameList = new ArrayList<>();
             for(String parentFieldName : parentFieldNameList){
+
                 if(!fieldNameList.contains(parentFieldName)){
                     fieldNameList.add(parentFieldName);
                     parentSpecialFieldNameList.add(parentFieldName);
