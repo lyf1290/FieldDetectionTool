@@ -19,11 +19,7 @@ public class ConstructSiteTemplate extends Template{
     private void buildFieldModels(String owner){
         List<FieldModel> fieldModels = new ArrayList<>();
         //如果这里改了，要到constructAdapter中进行对应的修改
-        FieldModel fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"getDirtyTag","[B",null,null);
-        fieldModels.add(fieldModel);
-        fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"putDirtyTag","[B",null,null);
-        fieldModels.add(fieldModel);
-        fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_constructSite$","[Ljava/lang/String;",null,null);
+        FieldModel fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_constructSite$","[Ljava/lang/String;",null,null);
         fieldModels.add(fieldModel);
         fieldModel = new FieldModel(Opcodes.ACC_PUBLIC,"_instanceId$","I",null,null);
         fieldModels.add(fieldModel);
@@ -61,23 +57,15 @@ public class ConstructSiteTemplate extends Template{
         lineNum += 3;
         insnList.add(new LineNumberNode(lineNum,lBeginNode));
         insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD,owner,"putDirtyTag","[B"));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD,owner,"_instanceId$","I"));
 
         Label notNullLabel = new Label();
         LabelNode notNullLabelNode = new LabelNode(notNullLabel);
-        insnList.add(new JumpInsnNode(Opcodes.IFNONNULL,notNullLabelNode));
+        insnList.add(new JumpInsnNode(Opcodes.IFNE,notNullLabelNode));
         Label nullLabel = new Label();
         LabelNode nullLabelNode = new LabelNode(nullLabel);
         insnList.add(nullLabelNode);
-        insnList.add(new LineNumberNode(++lineNum,nullLabelNode));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-        insnList.add(new IntInsnNode(Opcodes.BIPUSH,sourceFieldNameList.size()));
-        insnList.add(new IntInsnNode(Opcodes.NEWARRAY,Opcodes.T_BYTE));
-        insnList.add(new FieldInsnNode(Opcodes.PUTFIELD,owner,"putDirtyTag","[B"));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-        insnList.add(new IntInsnNode(Opcodes.BIPUSH,sourceFieldNameList.size()));
-        insnList.add(new IntInsnNode(Opcodes.NEWARRAY,Opcodes.T_BYTE));
-        insnList.add(new FieldInsnNode(Opcodes.PUTFIELD,owner,"getDirtyTag","[B"));
+
         //初始化_instanceId$
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
         insnList.add(new LdcInsnNode(owner));
@@ -153,33 +141,13 @@ public class ConstructSiteTemplate extends Template{
 //                insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
 //                insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
 
-                insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-                if(putTag){
-                    insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "putDirtyTag", "[B"));
-                }
-                else{
-                    insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "getDirtyTag", "[B"));
-                }
-                insnList.add(new IntInsnNode(Opcodes.BIPUSH,i));
-                insnList.add(new InsnNode(Opcodes.BALOAD));
-                insnList.add(new InsnNode(Opcodes.ICONST_1));
-                Label notEqualsLabel = new Label();
-                LabelNode notEqualsLabelNode = new LabelNode(notEqualsLabel);
-                labelList.add(notEqualsLabel);
-                insnList.add(new JumpInsnNode(Opcodes.IF_ICMPNE,notEqualsLabelNode));
-                Label equalsLabel = new Label();
-                LabelNode equalsLabelNode = new LabelNode(equalsLabel);
-                labelList.add(equalsLabel);
-                insnList.add(equalsLabelNode);
-                lineNum++;
-                insnList.add(new LineNumberNode(lineNum,equalsLabelNode));
+
                 insnList.add(new LdcInsnNode(owner));
                 insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
-                insnList.add(new InsnNode(Opcodes.ICONST_0));
                 insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
                 insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "_instanceId$", "I"));
                 if(putTag){
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;I)V", false));
                     if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
                         insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
                         insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
@@ -188,7 +156,7 @@ public class ConstructSiteTemplate extends Template{
                     }
                 }
                 else{
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
+                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;I)V", false));
                     if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
                         insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
                         insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
@@ -196,55 +164,8 @@ public class ConstructSiteTemplate extends Template{
 
                     }
                 }
-                if(returnLabelIndex == -1){
-                    returnLabel = new Label();
-                    labelList.add(returnLabel);
-                    returnLabelNode = new LabelNode(returnLabel);
-                    returnLabelIndex = labelList.size()-1;
-                }
-                insnList.add(new JumpInsnNode(Opcodes.GOTO,returnLabelNode));
-                insnList.add(notEqualsLabelNode);
-                lineNum += 3;
-                insnList.add(new LineNumberNode(lineNum,notEqualsLabelNode));
-                insnList.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
-                insnList.add(new LdcInsnNode(owner));
-                insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
-                insnList.add(new InsnNode(Opcodes.ICONST_1));
-                insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-                insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "_instanceId$", "I"));
-                if(putTag){
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "putField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
-                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
-                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
-                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "putField", "(Ljava/lang/String;)V", false));
 
-                    }
-                }
-                else{
-                    insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "tools/InfoCollector", "getField", "(Ljava/lang/String;Ljava/lang/String;ZI)V", false));
-                    if(parentClassName != null && systemConfig.getParentSpecialFieldList(owner).contains(sourceFieldNameList.get(i))){
-                        insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-                        insnList.add(new LdcInsnNode(sourceFieldNameList.get(i)));
-                        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, parentClassName, "getField", "(Ljava/lang/String;)V", false));
 
-                    }
-                }
-                Label modifyTagLabel = new Label();
-                labelList.add(modifyTagLabel);
-                LabelNode modifyTagLabelNode = new LabelNode(modifyTagLabel);
-                insnList.add(modifyTagLabelNode);
-                insnList.add(new LineNumberNode(++lineNum,modifyTagLabelNode));
-                insnList.add(new VarInsnNode(Opcodes.ALOAD,0));
-                if(putTag){
-                    insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "putDirtyTag", "[B"));
-                }
-                else{
-                    insnList.add(new FieldInsnNode(Opcodes.GETFIELD, owner, "getDirtyTag", "[B"));
-                }
-                insnList.add(new IntInsnNode(Opcodes.BIPUSH,i));
-                insnList.add(new InsnNode(Opcodes.ICONST_1));
-                insnList.add(new InsnNode(Opcodes.BASTORE));
 
             }
 

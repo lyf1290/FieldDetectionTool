@@ -53,11 +53,11 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-    public static void putField(String className,String fieldName,boolean first,int instanceId){
+    public static void putField(String className,String fieldName,int instanceId){
         classInfoMap.get(className).putField(fieldName,instanceId);
     }
 
-    public static void getField(String className,String fieldName,boolean first,int instanceId){
+    public static void getField(String className,String fieldName,int instanceId){
         classInfoMap.get(className).getField(fieldName,instanceId);
     }
     public static void show(){
