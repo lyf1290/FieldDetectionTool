@@ -17,6 +17,7 @@ import java.util.List;
 public class JavaAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
         List<String> args = Arrays.asList(agentArgs.split(":"));
+
         if(args.size() < 4){
             System.out.println("ERROR agentArgs size! Expecting args size = 4,divided by :");
             return;

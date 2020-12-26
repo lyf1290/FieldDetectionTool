@@ -1,0 +1,53 @@
+ClassName : Test	InstanceCount : 1
+FieldName : st
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : test2
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : test
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 1
+	GetCount : 2
+FieldName : testF
+	instancePutCount : 1
+	putCount : 3
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : test1
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0
+ClassName : TestFather	InstanceCount : 1
+FieldName : st
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : test
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : testF
+	instancePutCount : 1
+	putCount : 3
+	instanceGetCount : 0
+	GetCount : 0
+ClassName : Test$Inner	InstanceCount : 1
+FieldName : this$0
+	instancePutCount : 0
+	putCount : 0
+	instanceGetCount : 0
+	GetCount : 0
+FieldName : k
+	instancePutCount : 1
+	putCount : 1
+	instanceGetCount : 0
+	GetCount : 0

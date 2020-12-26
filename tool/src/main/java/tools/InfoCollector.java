@@ -25,7 +25,7 @@ import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 public class InfoCollector {
 
     private static Map<String, ClassInfo> classInfoMap = new HashMap<>();
-    private static Map<Long, Stack<CallSite>> callStackMap = new HashMap<>();
+    //private static Map<Long, Stack<CallSite>> callStackMap = new HashMap<>();
     private static Map<String,Lock> lockMap = new HashMap<>();
 
     static {
@@ -35,15 +35,7 @@ public class InfoCollector {
         for (String className : classNameList) {
             classInfoMap.put(className, new ClassInfo(SystemConfig.getInstance().getFieldNameList(className)));
         }
-        // List<String> fieldNames1 = new ArrayList<>();
-        // fieldNames1.add("test");
-        // fieldNames1.add("test1");
-        // fieldNames1.add("test2");
-        // fieldNames1.add("testF");
-        // List<String> fieldNames2 = new ArrayList<>();
-        // fieldNames2.add("testF");
-        // classInfoMap.put("Test",new ClassInfo(fieldNames1));
-        // classInfoMap.put("TestFather",new ClassInfo(fieldNames2));
+
     }
 
     public static void setClassInfoMap(Map<String, ClassInfo> classInfoMap) {
@@ -156,6 +148,19 @@ public class InfoCollector {
         }
         return instanceId;
     }
+    public static String[] getStack(){
+        String[] constructSite;
+
+        StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
+        constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.length-2)];
+        for(int i = callStack.length - 1,j = 0; i >= callStack.length - constructSite.length; --i,j++){
+            constructSite[j] = callStack[i].toString();
+        }
+
+        return constructSite;
+    }
+
+    /*
     public static String[] pushStack(String className,String methodName,String methodDesc){
         Long threadId = Thread.currentThread().getId();
         String[] constructSite;
@@ -198,4 +203,6 @@ public class InfoCollector {
 
         }
     }
+
+    */
 }
