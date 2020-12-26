@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
 
 
     <groupId>org.example</groupId>
@@ -36,6 +33,7 @@
                             <Agent-Class>JavaAgent</Agent-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
+                            <mainClass>Main</mainClass>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -45,22 +43,25 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.0.0</version>
                 <executions>
-                  <execution>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>shade</goal>
-                    </goals>
-                    <configuration>
-                      <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                          <manifestEntries>
-                            <Premain-Class>JavaAgent</Premain-Class>
-                          </manifestEntries>
-                        </transformer>
-                        <!-- <outputFile>./jmtrace.jar</outputFile> -->
-                      </transformers>
-                    </configuration>
-                  </execution>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Premain-Class>JavaAgent</Premain-Class>
+                                    </manifestEntries>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>Main</mainClass>
+                                </transformer>
+                                <!-- <outputFile>./jmtrace.jar</outputFile> -->
+                            </transformers>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -93,6 +94,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.knowm.xchart/xchart -->
+        <dependency>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+
+<dependency>
+    <groupId>org.knowm.xchart</groupId>
+    <artifactId>xchart-demo</artifactId>
+    <version>3.6.6</version>
+</dependency>
         <dependency>
             <artifactId>asm</artifactId>
             <groupId>org.ow2.asm</groupId>
@@ -104,6 +117,12 @@
             <groupId>org.ow2.asm</groupId>
             <version>${asm.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.6</version>
+        </dependency>
+
 
         <dependency>
             <artifactId>asm-analysis</artifactId>

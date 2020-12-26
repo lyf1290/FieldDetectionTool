@@ -4,14 +4,21 @@ import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
-
+import java.sql.Time;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.PieChart;
+import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 
 /**
  * 暂时只考虑单线程
@@ -55,47 +62,74 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-    public static void putField(String className,String fieldName,int instanceId){
-        classInfoMap.get(className).putField(fieldName,instanceId);
+
+    public static void putField(String className, String fieldName, boolean first, int instanceId) {
+        classInfoMap.get(className).putField(fieldName, instanceId);
     }
 
-    public static void getField(String className,String fieldName,int instanceId){
-        classInfoMap.get(className).getField(fieldName,instanceId);
+    public static void getField(String className, String fieldName, boolean first, int instanceId) {
+        classInfoMap.get(className).getField(fieldName, instanceId);
     }
-    public static void show(){
-        classInfoMap.forEach((key, value) -> {
-            System.out.print("ClassName : " + key + "\t");
-            value.show();
-        });
-    }
+
     public static void show(String agentArgs) {
         try {
             String[] ss = agentArgs.split("/");
             ss = java.util.Arrays.copyOf(ss, ss.length - 1);
-            PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
-                    true);
+            // PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
+            //         true);
             // PrintStream out = new
+            
             // PrintStream("/home/liziming/software-analyze/elasticsearch-7.9.3/testoutput.txt");
-            System.setOut(out);
+            //System.setOut(out);
             // List<String> classNameList =
             // SystemConfig.getInstance().getInterestringClassNameList();
             // for (String className : classNameList) {
             // System.out.println("interest ClassName : " + className);
             // }
             Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
-            map.forEach((key, value) -> {
-                System.out.print("ClassName : " + key + "\t");
-                value.show();
-            });
+            if (map.size()>0){
+                String jsonfiledir=String.join("/", ss) + "/testoutput";
+                File fp = new File(jsonfiledir);  
+                // 创建目录  
+                if (!fp.exists()) {  
+                    fp.mkdirs();// 目录不存在的情况下，创建目录。  
+                }
+                String jsonfilepath=String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json";
+                FileOutputStream file=new FileOutputStream(jsonfilepath);
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.writeValue(file,map);
+                file.close();
+                // 然后来计算，画柱状图与饼图
+                // System.out.println(map.keySet());
+                List<Object> charts = XchartDraw.drawBarandPieChart(map);
+                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
+                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
+                for (int j = 0; j < barcharts.size(); j++) {
+                    // System.out.println(charts.get(j).getSeriesMap());
+                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
+                }
+                for (int j = 0; j < piecharts.size(); j++) {
+                    // System.out.println(charts.get(j).getSeriesMap());
+                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
+                }
+            }
+           
+            // map.forEach((key, value) -> {
+            //     System.out.print("ClassName : " + key + "\t");
+            //     value.show();
+            // });
 
-            out.close();
+            //out.close();
+            
 
         } catch (Exception e) {
             // TODO: handle exception
         }
 
     }
-    public static void showConstructSite(){
+
+    public static void showConstructSite() {
         System.out.println();
         classInfoMap.forEach((key, value) -> {
             System.out.println("ClassName : " + key + "\t");
@@ -113,10 +147,10 @@ public class InfoCollector {
         try{
             classInfoMap.get(className).newInstance(constructSite);
             instanceId = classInfoMap.get(className).getInstanceCount();
-        }finally {
+        } finally {
             lock.unlock();
         }
-        if(instanceId == -1){
+        if (instanceId == -1) {
             System.out.println("getInstanceId ERROR : instanceId = -1");
         }
         return instanceId;
@@ -163,16 +197,16 @@ public class InfoCollector {
         }
         return constructSite;
     }
-    public static void popStack(){
+
+    public static void popStack() {
         Long threadId = Thread.currentThread().getId();
-        if(callStackMap.containsKey(threadId)){
-            //该线程已经有一个stack了
-            Stack<CallSite> callStack =  callStackMap.get(threadId);
+        if (callStackMap.containsKey(threadId)) {
+            // 该线程已经有一个stack了
+            Stack<CallSite> callStack = callStackMap.get(threadId);
             callStack.pop();
 
-        }
-        else{
-            System.out.println("popStack ERROR : threadID  = "+Thread.currentThread().getId());
+        } else {
+            System.out.println("popStack ERROR : threadID  = " + Thread.currentThread().getId());
 
         }
     }
