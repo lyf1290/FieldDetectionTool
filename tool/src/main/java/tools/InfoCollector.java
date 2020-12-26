@@ -11,9 +11,13 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.PieChart;
+import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 
 /**
  * 暂时只考虑单线程
@@ -91,10 +95,25 @@ public class InfoCollector {
             // }
             Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
             if (map.size()>0){
-                FileOutputStream file=new FileOutputStream(String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json");
+                String jsonfilepath=String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json";
+                FileOutputStream file=new FileOutputStream(jsonfilepath);
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(file,map);
                 file.close();
+                // 然后来计算，画柱状图与饼图
+                // System.out.println(map.keySet());
+                List<Object> charts = XchartDraw.drawBarandPieChart(map);
+                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
+                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
+                for (int j = 0; j < barcharts.size(); j++) {
+                    // System.out.println(charts.get(j).getSeriesMap());
+                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
+                }
+                for (int j = 0; j < piecharts.size(); j++) {
+                    // System.out.println(charts.get(j).getSeriesMap());
+                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
+                }
             }
            
             // map.forEach((key, value) -> {
