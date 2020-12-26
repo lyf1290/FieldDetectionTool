@@ -94,7 +94,7 @@ public class InfoCollector {
                 if (!fp.exists()) {  
                     fp.mkdirs();// 目录不存在的情况下，创建目录。  
                 }
-                String jsonfilepath=String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json";
+                String jsonfilepath=jsonfiledir + "/testoutput."+System.currentTimeMillis()+".json";
                 FileOutputStream file=new FileOutputStream(jsonfilepath);
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(file,map);
@@ -103,6 +103,7 @@ public class InfoCollector {
                 // System.out.println(map.keySet());
                 List<Object> charts = XchartDraw.drawBarandPieChart(map);
                 String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+                jsonfilename = jsonfiledir + "/" + jsonfilename;
                 List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
                 List<PieChart> piecharts = (List<PieChart>) charts.get(1);
                 for (int j = 0; j < barcharts.size(); j++) {
