@@ -5,6 +5,7 @@ import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
 import java.sql.Time;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.*;
@@ -87,6 +88,12 @@ public class InfoCollector {
             // }
             Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
             if (map.size()>0){
+                String jsonfiledir=String.join("/", ss) + "/testoutput";
+                File fp = new File(jsonfiledir);  
+                // 创建目录  
+                if (!fp.exists()) {  
+                    fp.mkdirs();// 目录不存在的情况下，创建目录。  
+                }
                 String jsonfilepath=String.join("/", ss) + "/testoutput/testoutput."+System.currentTimeMillis()+".json";
                 FileOutputStream file=new FileOutputStream(jsonfilepath);
                 ObjectMapper objectMapper = new ObjectMapper();
