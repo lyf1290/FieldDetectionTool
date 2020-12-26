@@ -68,10 +68,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.21.0</version>
-                <configuration>
-                    <argLine>-javaagent:/Users/liangyufei/Desktop/FieldDetectionTool/tool/out/artifacts/tool_jar/tool.jar=/Users/liangyufei/Desktop/FieldDetectionTool/tool/src/main/resources/UserConfig.txt</argLine>
-                    <include>TestFatherTest.java</include>
-                </configuration>
+                
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.platform</groupId>
