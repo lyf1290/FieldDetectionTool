@@ -62,17 +62,17 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-
-    public static void putField(String className, String fieldName, boolean first, int instanceId) {
-        classInfoMap.get(className).putField(fieldName, instanceId);
+    public static void putField(String className,String fieldName,int instanceId){
+        classInfoMap.get(className).putField(fieldName,instanceId);
     }
 
-    public static void getField(String className, String fieldName, boolean first, int instanceId) {
-        classInfoMap.get(className).getField(fieldName, instanceId);
+    public static void getField(String className,String fieldName,int instanceId){
+        classInfoMap.get(className).getField(fieldName,instanceId);
     }
 
     public static void show(String agentArgs) {
         try {
+
             String[] ss = agentArgs.split("/");
             ss = java.util.Arrays.copyOf(ss, ss.length - 1);
             // PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
@@ -86,7 +86,8 @@ public class InfoCollector {
             // for (String className : classNameList) {
             // System.out.println("interest ClassName : " + className);
             // }
-            Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
+            //Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
+            Map<String, ClassInfo> map = classInfoMap;
             if (map.size()>0){
                 String jsonfiledir=String.join("/", ss) + "/testoutput";
                 File fp = new File(jsonfiledir);  
@@ -98,6 +99,7 @@ public class InfoCollector {
                 FileOutputStream file=new FileOutputStream(jsonfilepath);
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.writeValue(file,map);
+                System.out.println("json file path :"+jsonfilepath);
                 file.close();
                 // 然后来计算，画柱状图与饼图
                 // System.out.println(map.keySet());
@@ -131,7 +133,7 @@ public class InfoCollector {
     }
 
     public static void showConstructSite() {
-        System.out.println();
+
         classInfoMap.forEach((key, value) -> {
             System.out.println("ClassName : " + key + "\t");
             value.showConstructSite();

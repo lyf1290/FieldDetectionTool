@@ -12,8 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class ClassInfo {
     // TODO 如果instance数量很多的话会超过int
     private int instanceCount = 0;
-    private final Map<String, FieldInfo> fieldInfoMap = new HashMap<>();
     @JsonIgnore
+    private final Map<String, FieldInfo> fieldInfoMap = new HashMap<>();
+
     private final Map<Integer,InstanceInfo> instanceInfoMap = new HashMap<>();
     @JsonIgnore
     private final List<String> fieldNameList = new ArrayList<>();
@@ -79,4 +80,7 @@ public class ClassInfo {
         });
     }
 
+    public Map<Integer, InstanceInfo> getInstanceInfoMap() {
+        return instanceInfoMap;
+    }
 }

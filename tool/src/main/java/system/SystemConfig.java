@@ -50,6 +50,9 @@ public class SystemConfig {
         //通过用户关注的类的路径，获得该class文件的字节码，解析获得internal name 和 parentName以及fields
         for(String interestringClassFilesPath : this.interestringClassFilesPathList){
             byte[] interestringClassByteCodes = ByteCodeTool.input(interestringClassFilesPath);
+            if(interestringClassByteCodes == null){
+                continue;
+            }
             ClassReader cr = new ClassReader(interestringClassByteCodes);
             ClassNode sourceNode = new ClassNode();
             cr.accept(sourceNode,0);

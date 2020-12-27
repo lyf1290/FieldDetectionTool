@@ -39,8 +39,8 @@ public class Main {
          test.getTest();
          test.getTest();
          Test.Inner inner = test.new Inner();
-//         System.out.println(args[0]);
-//        String path = "/Users/liangyufei/Desktop/FieldDetectionTool/tool/out";
+////         System.out.println(args[0]);
+//        String path = "/Users/liangyufei/Downloads/elasticsearch-master/testoutput";
 //        //String path = args[0];
 //        File file = new File(path);
 //        ArrayList<String> jsonfiles = new ArrayList<String>();
@@ -74,17 +74,17 @@ public class Main {
 //                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
 //                for (int j = 0; j < barcharts.size(); j++) {
 //                    // System.out.println(charts.get(j).getSeriesMap());
-//                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
+//                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), path+"/"+jsonfilename + j, BitmapFormat.PNG, 400);
 //                }
 //                for (int j = 0; j < piecharts.size(); j++) {
 //                    // System.out.println(charts.get(j).getSeriesMap());
-//                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
+//                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), path+"/"+jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
 //                }
 //
 //            } catch (Exception e) {
 //                e.printStackTrace();
 //            }
-//
+
 //        }
 
     }
