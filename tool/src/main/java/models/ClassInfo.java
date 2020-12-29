@@ -9,21 +9,22 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@JsonFilter("myFilter")
 public class ClassInfo {
     // TODO 如果instance数量很多的话会超过int
     private int instanceCount = 0;
-    @JsonIgnore
+
     private final Map<String, FieldInfo> fieldInfoMap = new HashMap<>();
 
     private final Map<Integer,InstanceInfo> instanceInfoMap = new HashMap<>();
-    @JsonIgnore
+
     private final List<String> fieldNameList = new ArrayList<>();
     public ClassInfo() {
-        this.instanceCount = 0;
+
 
     }
     public ClassInfo(List<String> fieldNames) {
-        this.instanceCount = 0;
+
 
         this.fieldNameList.addAll(fieldNames);
         for(String fieldName : fieldNames){
@@ -41,7 +42,7 @@ public class ClassInfo {
     public int getInstanceCount(){
         return this.instanceCount;
     }
-    public void newInstance(){
+    public synchronized void newInstance(){
         instanceCount++;
     }
     public void newInstance(String[] constructSite){

@@ -19,6 +19,7 @@ public class Test extends TestFather{
     public Test(int k) {
         this.testF = 2;
         st = 1;
+        new TestFather().st = 2;
     }
     public Test() {
         this.test = 2;

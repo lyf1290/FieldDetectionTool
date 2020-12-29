@@ -75,19 +75,8 @@ public class InfoCollector {
 
             String[] ss = agentArgs.split("/");
             ss = java.util.Arrays.copyOf(ss, ss.length - 1);
-            // PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) + "/testoutput.txt", true),
-            //         true);
-            // PrintStream out = new
-            
-            // PrintStream("/home/liziming/software-analyze/elasticsearch-7.9.3/testoutput.txt");
-            //System.setOut(out);
-            // List<String> classNameList =
-            // SystemConfig.getInstance().getInterestringClassNameList();
-            // for (String className : classNameList) {
-            // System.out.println("interest ClassName : " + className);
-            // }
-            //Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
-            Map<String, ClassInfo> map = classInfoMap;
+
+            Map<String, ClassInfo> map = Maps.filterValues(classInfoMap, r -> r.getInstanceCount() > 0);
             if (map.size()>0){
                 String jsonfiledir=String.join("/", ss) + "/testoutput";
                 File fp = new File(jsonfiledir);  
@@ -103,19 +92,19 @@ public class InfoCollector {
                 file.close();
                 // 然后来计算，画柱状图与饼图
                 // System.out.println(map.keySet());
-                List<Object> charts = XchartDraw.drawBarandPieChart(map);
-                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
-                jsonfilename = jsonfiledir + "/" + jsonfilename;
-                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
-                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
-                for (int j = 0; j < barcharts.size(); j++) {
-                    // System.out.println(charts.get(j).getSeriesMap());
-                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
-                }
-                for (int j = 0; j < piecharts.size(); j++) {
-                    // System.out.println(charts.get(j).getSeriesMap());
-                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
-                }
+//                List<Object> charts = XchartDraw.drawBarandPieChart(map);
+//                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+//                jsonfilename = jsonfiledir + "/" + jsonfilename;
+//                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
+//                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
+//                for (int j = 0; j < barcharts.size(); j++) {
+//                    // System.out.println(charts.get(j).getSeriesMap());
+//                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
+//                }
+//                for (int j = 0; j < piecharts.size(); j++) {
+//                    // System.out.println(charts.get(j).getSeriesMap());
+//                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
+//                }
             }
            
             // map.forEach((key, value) -> {
@@ -162,8 +151,9 @@ public class InfoCollector {
         String[] constructSite;
 
         StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
+
         constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.length-2)];
-        for(int i = callStack.length - 1,j = 0; i >= callStack.length - constructSite.length; --i,j++){
+        for(int i = 2,j = 0; j < constructSite.length; ++i,++j){
             constructSite[j] = callStack[i].toString();
         }
 
