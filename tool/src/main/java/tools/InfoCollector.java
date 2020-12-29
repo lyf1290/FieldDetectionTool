@@ -1,5 +1,8 @@
 package tools;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
@@ -86,25 +89,39 @@ public class InfoCollector {
                 }
                 String jsonfilepath=jsonfiledir + "/testoutput."+System.currentTimeMillis()+".json";
                 FileOutputStream file=new FileOutputStream(jsonfilepath);
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.writeValue(file,map);
-                System.out.println("json file path :"+jsonfilepath);
-                file.close();
-                // 然后来计算，画柱状图与饼图
-                // System.out.println(map.keySet());
-//                List<Object> charts = XchartDraw.drawBarandPieChart(map);
-//                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
-//                jsonfilename = jsonfiledir + "/" + jsonfilename;
-//                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
-//                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
-//                for (int j = 0; j < barcharts.size(); j++) {
-//                    // System.out.println(charts.get(j).getSeriesMap());
-//                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
-//                }
-//                for (int j = 0; j < piecharts.size(); j++) {
-//                    // System.out.println(charts.get(j).getSeriesMap());
-//                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
-//                }
+
+                if(SystemConfig.getInstance().getMode().equals("FieldDetection")){
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("instanceInfoMap","fieldNameList");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
+                    objectMapper.writer(filters).writeValue(file, map);
+                    System.out.println("json file path :"+jsonfilepath);
+                    file.close();
+                    // 然后来计算，画柱状图与饼图
+                    // System.out.println(map.keySet());
+                    List<Object> charts = XchartDraw.drawBarandPieChart(map);
+                    String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+                    jsonfilename = jsonfiledir + "/" + jsonfilename;
+                    List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
+                    List<PieChart> piecharts = (List<PieChart>) charts.get(1);
+                    for (int j = 0; j < barcharts.size(); j++) {
+                        // System.out.println(charts.get(j).getSeriesMap());
+                        BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfilename + j, BitmapFormat.PNG, 400);
+                    }
+                    for (int j = 0; j < piecharts.size(); j++) {
+                        // System.out.println(charts.get(j).getSeriesMap());
+                        BitmapEncoder.saveBitmapWithDPI(piecharts.get(j), jsonfilename + (j+barcharts.size()), BitmapFormat.PNG, 400);
+                    }
+                }else if(SystemConfig.getInstance().getMode().equals("ConstructSite")){
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("fieldInfoMap","fieldNameList");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
+                    objectMapper.writer(filters).writeValue(file, map);
+                    System.out.println("json file path :"+jsonfilepath);
+                    file.close();
+                }
+
+
             }
            
             // map.forEach((key, value) -> {

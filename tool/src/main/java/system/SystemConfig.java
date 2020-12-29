@@ -20,6 +20,16 @@ public class SystemConfig {
     private final Map<String,List<String>> overwriteFieldMap = new HashMap<>();
     private final Map<String,List<String>> parentSpecialFieldMap = new HashMap<>();
     private final static SystemConfig SYSTEM_CONFIG = new SystemConfig();
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    private String mode = "FieldDetection";
     public static SystemConfig getInstance(){
         return SYSTEM_CONFIG;
     }
@@ -39,6 +49,7 @@ public class SystemConfig {
         this.interestringClassFilesPathList = UserConfig.getInstance().getInterestringClassFilesPathList();
         this.environmentClassFilesPathList = UserConfig.getInstance().getEnvironmentClassFilesPathList();
         this.constructSiteSize = UserConfig.getInstance().getConstructSiteSize();
+        this.mode = UserConfig.getInstance().getMode();
         this.init();
     }
 
