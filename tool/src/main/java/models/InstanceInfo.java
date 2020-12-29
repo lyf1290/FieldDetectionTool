@@ -38,4 +38,28 @@ public class InstanceInfo {
 
         });
     }
+
+    public String[] getConstructSite() {
+        return constructSite;
+    }
+
+    public void setConstructSite(String[] constructSite) {
+        this.constructSite = constructSite;
+    }
+
+    public Map<String, Integer> getFieldPutCountMap() {
+        return fieldPutCountMap;
+    }
+
+    public void setFieldPutCountMap(Map<String, Integer> fieldPutCountMap) {
+        this.fieldPutCountMap = fieldPutCountMap;
+    }
+
+    public Map<String, Integer> getFieldGetCountMap() {
+        return fieldGetCountMap;
+    }
+
+    public void setFieldGetCountMap(Map<String, Integer> fieldGetCountMap) {
+        this.fieldGetCountMap = fieldGetCountMap;
+    }
 }

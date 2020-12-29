@@ -1,5 +1,8 @@
 package tools;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import models.CallSite;
 import models.ClassInfo;
 import system.SystemConfig;
@@ -65,17 +68,17 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-
-    public static void putField(String className, String fieldName, boolean first, int instanceId) {
-        classInfoMap.get(className).putField(fieldName, instanceId);
+    public static void putField(String className,String fieldName,int instanceId){
+        classInfoMap.get(className).putField(fieldName,instanceId);
     }
 
-    public static void getField(String className, String fieldName, boolean first, int instanceId) {
-        classInfoMap.get(className).getField(fieldName, instanceId);
+    public static void getField(String className,String fieldName,int instanceId){
+        classInfoMap.get(className).getField(fieldName,instanceId);
     }
 
     public static void show(String agentArgs, String p) {
         try {
+
             String[] ss = agentArgs.split("/");
             ss = java.util.Arrays.copyOf(ss, ss.length - 1);
             // PrintStream out = new PrintStream(new FileOutputStream(String.join("/", ss) +
@@ -135,6 +138,8 @@ public class InfoCollector {
                     BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
                             BitmapFormat.PNG, 400);
                 }
+
+
             }
 
             // map.forEach((key, value) -> {
@@ -151,7 +156,7 @@ public class InfoCollector {
     }
 
     public static void showConstructSite() {
-        System.out.println();
+
         classInfoMap.forEach((key, value) -> {
             System.out.println("ClassName : " + key + "\t");
             value.showConstructSite();
@@ -182,8 +187,9 @@ public class InfoCollector {
         String[] constructSite;
 
         StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
-        constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(), callStack.length - 2)];
-        for (int i = callStack.length - 1, j = 0; i >= callStack.length - constructSite.length; --i, j++) {
+
+        constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.length-2)];
+        for(int i = 2,j = 0; j < constructSite.length; ++i,++j){
             constructSite[j] = callStack[i].toString();
         }
 

@@ -38,11 +38,13 @@ public class JavaAgent {
             @Override
             public void run()
             {
+
                 if(UserConfig.getInstance().getMode().equals("FieldDetection")){
                     InfoCollector.show(args.get(0),args.get(4));
                 }
                 else if(UserConfig.getInstance().getMode().equals("ConstructSite")){
-                    InfoCollector.showConstructSite();
+                    InfoCollector.show(args.get(0));
+                    //InfoCollector.showConstructSite();
                 }
             }
         }));
@@ -53,7 +55,7 @@ public class JavaAgent {
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                 ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-            if (SystemConfig.getInstance().isInterestringClass(className) || (SystemConfig.getInstance().isEnvironmentClass(className) && UserConfig.getInstance().getMode().equals("ConstructSite"))) {
+            if (SystemConfig.getInstance().isInterestringClass(className)) {
                 System.out.println(className);
                 ClassReader cr = new ClassReader(classfileBuffer);
                 ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);

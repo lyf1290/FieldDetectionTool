@@ -321,9 +321,9 @@ public class FieldDetectionTemplate extends Template {
         List<MethodModel> methodModels = new ArrayList<>();
         InsnList putFieldInsnList = buildPutGetFieldMethodInsnList(sourceFieldNameList,true,owner);
         InsnList getFieldInsnList = buildPutGetFieldMethodInsnList(sourceFieldNameList,false,owner);
-        MethodModel methodModel = new MethodModel(Opcodes.ACC_PUBLIC,"getField","(Ljava/lang/String;)V",null,null,getFieldInsnList);
+        MethodModel methodModel = new MethodModel(Opcodes.ACC_PUBLIC+Opcodes.ACC_SYNCHRONIZED,"getField","(Ljava/lang/String;)V",null,null,getFieldInsnList);
         methodModels.add(methodModel);
-        methodModel = new MethodModel(Opcodes.ACC_PUBLIC,"putField","(Ljava/lang/String;)V",null,null,putFieldInsnList);
+        methodModel = new MethodModel(Opcodes.ACC_PUBLIC+Opcodes.ACC_SYNCHRONIZED,"putField","(Ljava/lang/String;)V",null,null,putFieldInsnList);
         methodModels.add(methodModel);
 
         this.newMethodModels.put(owner,methodModels);
