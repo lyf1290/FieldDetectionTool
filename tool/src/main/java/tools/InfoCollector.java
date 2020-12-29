@@ -130,27 +130,27 @@ public class InfoCollector {
                     List<PieChart> piecharts = (List<PieChart>) charts.get(1);
                     List<CategoryChart> detailcharts = (List<CategoryChart>) charts.get(2);
                     List<String> userconfig2 = (List<String>) charts.get(3);
-                    // for (int j = 0; j < barcharts.size(); j++) {
-                    //     // System.out.println(charts.get(j).getSeriesMap());
-                    //     BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
-                    //             BitmapFormat.PNG, 400);
-                    // }
-                    // for (int j = 0; j < piecharts.size(); j++) {
-                    //     // System.out.println("fefefefefefefefefewgegbegegbebe");
-                    //     BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
-                    //             jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
-                    // }
-                    // for (int j = 0; j < detailcharts.size(); j++) {
-                    //     BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
-                    //             BitmapFormat.PNG, 400);
-                    // }
+                    for (int j = 0; j < barcharts.size(); j++) {
+                        // System.out.println(charts.get(j).getSeriesMap());
+                        BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
+                                BitmapFormat.PNG, 400);
+                    }
+                    for (int j = 0; j < piecharts.size(); j++) {
+                        // System.out.println("fefefefefefefefefewgegbegegbebe");
+                        BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
+                                jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
+                    }
+                    for (int j = 0; j < detailcharts.size(); j++) {
+                        BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
+                                BitmapFormat.PNG, 400);
+                    }
                     String userconfig2filepath = String.join("/", ss) + "/UserConfig2.txt";
                     File file2 = new File(userconfig2filepath);
                     // 如果没有文件就创建
                     if (!file2.isFile()) {
                         file2.createNewFile();
                     }
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(userconfig2filepath));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(userconfig2filepath,false));
                    
                     
                     for (int j = 0; j < userconfig2.size(); j++) {
