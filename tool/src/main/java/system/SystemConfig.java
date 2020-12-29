@@ -19,6 +19,7 @@ public class SystemConfig {
     private final Map<String,String> outerClassNameMap = new HashMap<>();
     private final Map<String,List<String>> overwriteFieldMap = new HashMap<>();
     private final Map<String,List<String>> parentSpecialFieldMap = new HashMap<>();
+    private final Map<String,String> classname2path = new HashMap<>();
     private final static SystemConfig SYSTEM_CONFIG = new SystemConfig();
     public static SystemConfig getInstance(){
         return SYSTEM_CONFIG;
@@ -55,6 +56,7 @@ public class SystemConfig {
             cr.accept(sourceNode,0);
             //将关注类的名字记录下来
             this.interestringClassNameList.add(sourceNode.name);
+            this.classname2path.put(sourceNode.name, interestringClassFilesPath);
             extendFlagMap.put(sourceNode.name,false);
             //将关注类的父类的名字也记录到map中
             this.parentClassNameMap.put(sourceNode.name,sourceNode.superName);

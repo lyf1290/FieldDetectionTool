@@ -8,14 +8,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+@JsonFilter("myFilter")
 public class ClassInfo {
     // TODO 如果instance数量很多的话会超过int
     private int instanceCount = 0;
     private final Map<String, FieldInfo> fieldInfoMap = new HashMap<>();
-    @JsonIgnore
+    //@JsonIgnore
     private final Map<Integer,InstanceInfo> instanceInfoMap = new HashMap<>();
-    @JsonIgnore
+    //@JsonIgnore
     private final List<String> fieldNameList = new ArrayList<>();
     public ClassInfo() {
         this.instanceCount = 0;

@@ -39,7 +39,7 @@ public class JavaAgent {
             public void run()
             {
                 if(UserConfig.getInstance().getMode().equals("FieldDetection")){
-                    InfoCollector.show(args.get(0));
+                    InfoCollector.show(args.get(0),args.get(4));
                 }
                 else if(UserConfig.getInstance().getMode().equals("ConstructSite")){
                     InfoCollector.showConstructSite();

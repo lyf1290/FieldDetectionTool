@@ -59,7 +59,7 @@ public class XchartDrawTest {
                 });
                 // 然后来计算，画柱状图与饼图
                 // System.out.println(map.keySet());
-                List<Object> charts = XchartDraw.drawBarandPieChart(map);
+                List<Object> charts = XchartDraw.drawBarandPieChart(map,0.6f);
                 String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
                 List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
                 List<PieChart> piecharts = (List<PieChart>) charts.get(1);
