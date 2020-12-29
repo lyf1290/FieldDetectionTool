@@ -19,6 +19,7 @@ import com.google.common.primitives.Floats;
 
 import models.ClassInfo;
 import models.FieldInfo;
+import system.SystemConfig;
 
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -216,9 +217,12 @@ public class XchartDraw {
         }
         // 画利用率低的类
         List<CategoryChart> detailcharts = new ArrayList<CategoryChart>();
+        List<String> userconfig2 = new ArrayList<String>();
         for (int i = 0; i < classesname.size(); i++) {
             if (detailbarchart[i]) {
+                
                 String classname = classesname.get(i);
+                userconfig2.add(SystemConfig.getInstance().getClassname2path(classname));
                 // 获取这个类有哪些成员变量
                 String[] fields = (String[]) datamap.get(classname).getFieldInfoMap().keySet().toArray(String[]::new);
                 CategoryChart barchart = new CategoryChartBuilder()
@@ -250,7 +254,7 @@ public class XchartDraw {
                 detailcharts.add(barchart);
             }
         }
-        return Arrays.asList(barcharts, piecharts, detailcharts);
+        return Arrays.asList(barcharts, piecharts, detailcharts,userconfig2);
 
     }
 

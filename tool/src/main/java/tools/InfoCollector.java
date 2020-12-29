@@ -8,8 +8,10 @@ import models.ClassInfo;
 import system.SystemConfig;
 import user.UserConfig;
 import java.sql.Time;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -68,12 +70,13 @@ public class InfoCollector {
     public static void getField(String className, String fieldName, boolean first) {
         classInfoMap.get(className).getField(fieldName, first);
     }
-    public static void putField(String className,String fieldName,int instanceId){
-        classInfoMap.get(className).putField(fieldName,instanceId);
+
+    public static void putField(String className, String fieldName, int instanceId) {
+        classInfoMap.get(className).putField(fieldName, instanceId);
     }
 
-    public static void getField(String className,String fieldName,int instanceId){
-        classInfoMap.get(className).getField(fieldName,instanceId);
+    public static void getField(String className, String fieldName, int instanceId) {
+        classInfoMap.get(className).getField(fieldName, instanceId);
     }
 
     public static void show(String agentArgs, String p) {
@@ -110,9 +113,10 @@ public class InfoCollector {
                 }
                 String jsonfilepath = jsonfiledir + "/testoutput." + times + ".json";
                 FileOutputStream file = new FileOutputStream(jsonfilepath);
-                if(SystemConfig.getInstance().getMode().equals("FieldDetection")){
+                if (SystemConfig.getInstance().getMode().equals("FieldDetection")) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("instanceInfoMap","fieldNameList");
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("instanceInfoMap",
+                            "fieldNameList");
                     FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
 
                     objectMapper.writer(filters).writeValue(file, map);
@@ -125,30 +129,47 @@ public class InfoCollector {
                     List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
                     List<PieChart> piecharts = (List<PieChart>) charts.get(1);
                     List<CategoryChart> detailcharts = (List<CategoryChart>) charts.get(2);
-                    for (int j = 0; j < barcharts.size(); j++) {
-                        // System.out.println(charts.get(j).getSeriesMap());
-                        BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
-                                BitmapFormat.PNG, 400);
+                    List<String> userconfig2 = (List<String>) charts.get(3);
+                    // for (int j = 0; j < barcharts.size(); j++) {
+                    //     // System.out.println(charts.get(j).getSeriesMap());
+                    //     BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
+                    //             BitmapFormat.PNG, 400);
+                    // }
+                    // for (int j = 0; j < piecharts.size(); j++) {
+                    //     // System.out.println("fefefefefefefefefewgegbegegbebe");
+                    //     BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
+                    //             jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
+                    // }
+                    // for (int j = 0; j < detailcharts.size(); j++) {
+                    //     BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
+                    //             BitmapFormat.PNG, 400);
+                    // }
+                    String userconfig2filepath = String.join("/", ss) + "/UserConfig2.txt";
+                    File file2 = new File(userconfig2filepath);
+                    // 如果没有文件就创建
+                    if (!file2.isFile()) {
+                        file2.createNewFile();
                     }
-                    for (int j = 0; j < piecharts.size(); j++) {
-                        // System.out.println("fefefefefefefefefewgegbegegbebe");
-                        BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
-                                jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(userconfig2filepath));
+                   
+                    
+                    for (int j = 0; j < userconfig2.size(); j++) {
+                        if (userconfig2.get(j) == null) {
+                            continue;
+                        }
+                        writer.write(userconfig2.get(j) + "\n");
                     }
-                    for (int j = 0; j < detailcharts.size(); j++) {
-                        BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
-                                BitmapFormat.PNG, 400);
-                    }
-                }else if(SystemConfig.getInstance().getMode().equals("ConstructSite")){
+                    writer.close();
+
+                } else if (SystemConfig.getInstance().getMode().equals("ConstructSite")) {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("fieldInfoMap","fieldNameList");
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("fieldInfoMap",
+                            "fieldNameList");
                     FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
 
                     objectMapper.writer(filters).writeValue(file, map);
                     file.close();
                 }
-
-
 
             }
 
@@ -198,8 +219,8 @@ public class InfoCollector {
 
         StackTraceElement[] callStack = Thread.currentThread().getStackTrace();
 
-        constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(),callStack.length-2)];
-        for(int i = 2,j = 0; j < constructSite.length; ++i,++j){
+        constructSite = new String[Math.min(SystemConfig.getInstance().getConstructSiteSize(), callStack.length - 2)];
+        for (int i = 2, j = 0; j < constructSite.length; ++i, ++j) {
             constructSite[j] = callStack[i].toString();
         }
 

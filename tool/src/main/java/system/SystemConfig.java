@@ -196,5 +196,11 @@ public class SystemConfig {
         }
         return new ArrayList<>();
     }
+    public String getClassname2path(String classname){
+        if(this.classname2path.containsKey(classname)) {
+            return this.classname2path.get(classname);
+        }
+        return null;
+    }
 
 }
