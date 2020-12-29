@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @JsonFilter("myFilter")
 public class ClassInfo {
     // TODO 如果instance数量很多的话会超过int
