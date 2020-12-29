@@ -43,7 +43,7 @@ public class JavaAgent {
                     InfoCollector.show(args.get(0),args.get(4));
                 }
                 else if(UserConfig.getInstance().getMode().equals("ConstructSite")){
-                    InfoCollector.show(args.get(0));
+                    InfoCollector.show(args.get(0),args.get(4));
                     //InfoCollector.showConstructSite();
                 }
             }

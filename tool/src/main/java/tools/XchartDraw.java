@@ -219,7 +219,8 @@ public class XchartDraw {
         for (int i = 0; i < classesname.size(); i++) {
             if (detailbarchart[i]) {
                 String classname = classesname.get(i);
-                String[] fields = (String[]) datamap.get(classname).getFieldInfoMap().keySet().toArray(String[]::new);// 获取这个类有哪些成员变量
+                // 获取这个类有哪些成员变量
+                String[] fields = (String[]) datamap.get(classname).getFieldInfoMap().keySet().toArray(String[]::new);
                 CategoryChart barchart = new CategoryChartBuilder()
                         .width(fields.length * 40 > 1000 ? fields.length * 40 : 1000).height(1200)
                         .title("类的详细情况：" + classesname.get(i)).xAxisTitle("成员变量").yAxisTitle("利用率")

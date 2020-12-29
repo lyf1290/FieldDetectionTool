@@ -21,7 +21,7 @@ public class SystemConfig {
     private final Map<String,List<String>> parentSpecialFieldMap = new HashMap<>();
     private final Map<String,String> classname2path = new HashMap<>();
     private final static SystemConfig SYSTEM_CONFIG = new SystemConfig();
-
+    private String mode = "FieldDetection";
     public String getMode() {
         return mode;
     }
@@ -30,7 +30,7 @@ public class SystemConfig {
         this.mode = mode;
     }
 
-    private String mode = "FieldDetection";
+
     public static SystemConfig getInstance(){
         return SYSTEM_CONFIG;
     }

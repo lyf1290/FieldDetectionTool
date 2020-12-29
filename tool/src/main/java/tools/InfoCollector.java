@@ -110,34 +110,44 @@ public class InfoCollector {
                 }
                 String jsonfilepath = jsonfiledir + "/testoutput." + times + ".json";
                 FileOutputStream file = new FileOutputStream(jsonfilepath);
-                ObjectMapper objectMapper = new ObjectMapper();
-                SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept(new String[]{"instanceInfoMap","fieldNameList"});
-                FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
+                if(SystemConfig.getInstance().getMode().equals("FieldDetection")){
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("instanceInfoMap","fieldNameList");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
 
-                objectMapper.writer(filters).writeValue(file, map);
-                file.close();
-                // 然后来计算，画柱状图与饼图
-                // System.out.println(map.keySet());
-                List<Object> charts = XchartDraw.drawBarandPieChart(map, Float.parseFloat(p));
-                String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
-                // jsonfilename = jsonfiledir + "/" + jsonfilename;
-                List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
-                List<PieChart> piecharts = (List<PieChart>) charts.get(1);
-                List<CategoryChart> detailcharts = (List<CategoryChart>) charts.get(2);
-                for (int j = 0; j < barcharts.size(); j++) {
-                    // System.out.println(charts.get(j).getSeriesMap());
-                    BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
-                            BitmapFormat.PNG, 400);
+                    objectMapper.writer(filters).writeValue(file, map);
+                    file.close();
+                    // 然后来计算，画柱状图与饼图
+                    // System.out.println(map.keySet());
+                    List<Object> charts = XchartDraw.drawBarandPieChart(map, Float.parseFloat(p));
+                    String jsonfilename = jsonfilepath.split("/")[jsonfilepath.split("/").length - 1];
+                    // jsonfilename = jsonfiledir + "/" + jsonfilename;
+                    List<CategoryChart> barcharts = (List<CategoryChart>) charts.get(0);
+                    List<PieChart> piecharts = (List<PieChart>) charts.get(1);
+                    List<CategoryChart> detailcharts = (List<CategoryChart>) charts.get(2);
+                    for (int j = 0; j < barcharts.size(); j++) {
+                        // System.out.println(charts.get(j).getSeriesMap());
+                        BitmapEncoder.saveBitmapWithDPI(barcharts.get(j), jsonfiledir + "/" + jsonfilename + j,
+                                BitmapFormat.PNG, 400);
+                    }
+                    for (int j = 0; j < piecharts.size(); j++) {
+                        // System.out.println("fefefefefefefefefewgegbegegbebe");
+                        BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
+                                jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
+                    }
+                    for (int j = 0; j < detailcharts.size(); j++) {
+                        BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
+                                BitmapFormat.PNG, 400);
+                    }
+                }else if(SystemConfig.getInstance().getMode().equals("ConstructSite")){
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    SimpleBeanPropertyFilter theFilter = SimpleBeanPropertyFilter.serializeAllExcept("fieldInfoMap","fieldNameList");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("myFilter", theFilter);
+
+                    objectMapper.writer(filters).writeValue(file, map);
+                    file.close();
                 }
-                for (int j = 0; j < piecharts.size(); j++) {
-                    // System.out.println("fefefefefefefefefewgegbegegbebe");
-                    BitmapEncoder.saveBitmapWithDPI(piecharts.get(j),
-                            jsonfiledir + "/" + jsonfilename + (j + barcharts.size()), BitmapFormat.PNG, 400);
-                }
-                for (int j = 0; j < detailcharts.size(); j++) {
-                    BitmapEncoder.saveBitmapWithDPI(detailcharts.get(j), detailfiledir + "/" + jsonfilename + j,
-                            BitmapFormat.PNG, 400);
-                }
+
 
 
             }
